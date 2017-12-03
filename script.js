@@ -126,13 +126,10 @@ const updateAreas = (areaData, links) => {
         .attr('z-index', 0)
         .attr('stroke', 'black');
 
-    // const areaContainer = areas.enter().append('g')
-		// .classed('areaData', true);
+    const areaContainer = areas.enter().append('g')
+    	.classed('areaData', true);
 
-	const drawnAreas = areas.enter().append('rect')
-		.classed('areaData', true)
-        // .attr('y', 100)
-		// .attr('x', (d,i) => i * 200)
+	const drawnAreas = areaContainer.append('rect')
 		.attr('width', 100)
 		.attr('height', 100)
 		.attr('fill', () => randomColor())
@@ -142,13 +139,11 @@ const updateAreas = (areaData, links) => {
         .attr('ry', '20')
         .attr('z-index', 1);
 
-	drawnAreas.append('g').selectAll('text').data(areaDataList).enter().append('text')
+    areaContainer.append('text')
         .text(node => node.location)
-        .attr('font-size', 100)
-        .attr('x', 15)
-        .attr('y', 4);
-
-
+        .attr('font-size', 14)
+        .attr('x', 0)
+        .attr('y', 120);
 
     const dragDrop = d3.drag()
         .on('start', node => {
@@ -168,7 +163,7 @@ const updateAreas = (areaData, links) => {
             node.fy = null
         });
 
-	drawnAreas.call(dragDrop);
+	areaContainer.call(dragDrop);
 
 	drawnAreas
         .append('title').text((d) => {return d.location; });
@@ -182,21 +177,24 @@ const updateAreas = (areaData, links) => {
         .strength(link => link.strength));
 
 	let nodeAreaConnector = {};
-    areaDataList.forEach((area,i) => nodeAreaConnector[area.location] =  drawnAreas.nodes()[i]);
+    areaDataList.forEach((area,i) => nodeAreaConnector[area.location] =  areaContainer.nodes()[i]);
 
     const linksWithNodes = links.map(link => { return {source: nodeAreaConnector[link.source],
 		target: nodeAreaConnector[link.target], strength: link.strength}});
-
+    console.log(areaContainer);
+    console.log(areaContainer.nodes());
+//  transform="translate(20,2.5)
     simulation.nodes(areaDataList).on('tick', () => {
-        drawnAreas
-            .attr('x', node => node.x)
-			.attr('y', node => node.y);
+        areaContainer
+            .attr('transform', node => { console.log(node); return "translate( " +[node.x, node.y].join(',') + ")"})
+        	.attr('vx', node => node.x)
+        	.attr('vy', node => node.y);
         linkElements
 			// TODO hardcoded center of rectangle here for testing
-            .attr('x1', link => nodeAreaConnector[link.source].x.baseVal.value + 50)
-            .attr('y1', link => nodeAreaConnector[link.source].y.baseVal.value + 50)
-            .attr('x2', link => nodeAreaConnector[link.target].x.baseVal.value + 50)
-            .attr('y2', link => nodeAreaConnector[link.target].y.baseVal.value + 50);
+            .attr('x1', link => {console.log(nodeAreaConnector[link.source]) ;return parseFloat(nodeAreaConnector[link.source].getAttribute('vx')) + 50;})
+            .attr('y1', link => parseFloat(nodeAreaConnector[link.source].getAttribute('vy')) + 50)
+            .attr('x2', link => parseFloat(nodeAreaConnector[link.target].getAttribute('vx')) + 50)
+            .attr('y2', link => parseFloat(nodeAreaConnector[link.target].getAttribute('vy')) + 50);
     });
     console.log(drawnAreas);
 
