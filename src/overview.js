@@ -2,76 +2,7 @@ const mainContainer = "container";
 
 const width = 200, height = 200;
 const center = {x: 200, y: 200};
-const data =  {
- 	"scenes": [{
- 			"id": "0",
- 			"name": "The beginning ...",
- 			"location": "Levi's home",
- 			"characters": ["Levi"],
- 			"script": [{
- 				"character": "Levi",
- 				"dialog": "I'm running 30mn late !"
- 			}],
- 			"rawscript": "---url---"
- 		},
- 		{
- 			"id": "1",
- 			"name": "First meeting",
- 			"location": "DW Building",
- 			"characters": ["Levi", "Haoming", "Valentin"],
- 			"script": [{
- 					"character": "Haoming",
- 					"dialog": "I'll cluster this pdf, you guys can think about the vizualisation"
- 				},
- 				{
- 					"character": "Levi",
- 					"dialog": "Fine, Valentin take this pen"
- 				},
- 				{
- 					"character": "Valentin",
- 					"dialog": "Thanks, I think we can start like this"
- 				},
- 				{
- 					"character": "Levi",
- 					"dialog": "And we could also do like this"
- 				},
- 				{
- 					"character": "Valentin",
- 					"dialog": "Yes, I'll also write a json file so we can start"
- 				}
- 			],
- 			"rawscript": "---url---"
- 		},
-        {
-            "id": "2",
-            "name": "Second meeting",
-            "location": "DW2 Building",
-            "characters": ["Levi", "Haoming", "Valentin"],
-            "script": [{
-                "character": "Haoming",
-                "dialog": "I'll cluster this pdf, you guys can think about the vizualisation"
-            },
-                {
-                    "character": "Levi",
-                    "dialog": "Fine, Valentin take this pen"
-                },
-                {
-                    "character": "Valentin",
-                    "dialog": "Thanks, I think we can start like this"
-                },
-                {
-                    "character": "Levi",
-                    "dialog": "And we could also do like this"
-                },
-                {
-                    "character": "Valentin",
-                    "dialog": "Yes, I'll also write a json file so we can start"
-                }
-            ],
-            "rawscript": "---url---"
-        }
- 	]
- };
+const data = window.globalBucket.data;
 
 let svg;
 let context;
@@ -89,24 +20,22 @@ const init = () => {
 		  // .attr('width', width)
 		  // .attr('height', height);
 
-	overview();
+	updateOverview(data);
 };
 
 /* code for the overview page
 */
-const overview = () => {
+const updateOverview = (data) => {
 	const areas = getSceneData(data);
     const links = createLinks();
 	updateAreas(areas, links);
-
 };
+
+window.globalBucket.overview = {updateOverview};
 
 const updateAreas = (areaData, links) => {
 	let areaDataList = Object.keys(areaData).map(location =>
 		areaData[location]);
-
-    console.log(links);
-	console.log(areaDataList);
 
 	// TODO just for testing, this currently uses the rainbowmap
 	const randomColor = () => {
@@ -147,20 +76,20 @@ const updateAreas = (areaData, links) => {
 
     const dragDrop = d3.drag()
         .on('start', node => {
-            node.fx = node.x
-            node.fy = node.y
+            node.fx = node.x;
+            node.fy = node.y;
         })
         .on('drag', node => {
             simulation.alphaTarget(0.7).restart()
-            node.fx = d3.event.x
-            node.fy = d3.event.y
+            node.fx = d3.event.x;
+            node.fy = d3.event.y;
         })
         .on('end', node => {
             if (!d3.event.active) {
                 simulation.alphaTarget(0)
             }
-            node.fx = null
-            node.fy = null
+            node.fx = null;
+            node.fy = null;
         });
 
 	areaContainer.call(dragDrop);
@@ -169,8 +98,11 @@ const updateAreas = (areaData, links) => {
         .append('title').text((d) => {return d.location; });
 
     const simulation = d3.forceSimulation()
-        .force('charge', d3.forceManyBody().strength(-40))
-        .force('center', d3.forceCenter(center.x, center.y));
+        .force('charge', d3.forceManyBody().strength(-40)) //.strength(-40))
+        .force('center', d3.forceCenter(center.x, center.y))
+    	.force("collide",d3.forceCollide( function(d){return 100 }).iterations(16) )
+        .force("y", d3.forceY(0))
+        .force("x", d3.forceX(0));
 
     simulation.force('link', d3.forceLink()
         .id(link => link.id)
@@ -181,27 +113,22 @@ const updateAreas = (areaData, links) => {
 
     const linksWithNodes = links.map(link => { return {source: nodeAreaConnector[link.source],
 		target: nodeAreaConnector[link.target], strength: link.strength}});
-    console.log(areaContainer);
-    console.log(areaContainer.nodes());
-//  transform="translate(20,2.5)
+
+    simulation.force('link').links(linksWithNodes);
     simulation.nodes(areaDataList).on('tick', () => {
         areaContainer
-            .attr('transform', node => { console.log(node); return "translate( " +[node.x, node.y].join(',') + ")"})
+            .attr('transform', node => "translate( " +[node.x, node.y].join(',') + ")")
         	.attr('vx', node => node.x)
         	.attr('vy', node => node.y);
         linkElements
 			// TODO hardcoded center of rectangle here for testing
-            .attr('x1', link => {console.log(nodeAreaConnector[link.source]) ;return parseFloat(nodeAreaConnector[link.source].getAttribute('vx')) + 50;})
+            .attr('x1', link => parseFloat(nodeAreaConnector[link.source].getAttribute('vx')) + 50)
             .attr('y1', link => parseFloat(nodeAreaConnector[link.source].getAttribute('vy')) + 50)
             .attr('x2', link => parseFloat(nodeAreaConnector[link.target].getAttribute('vx')) + 50)
             .attr('y2', link => parseFloat(nodeAreaConnector[link.target].getAttribute('vy')) + 50);
     });
-    console.log(drawnAreas);
 
-    simulation
-        .force("link", d3.forceLink(linksWithNodes));
-
-
+    simulation.restart();
 };
 
 const createLinks = () => {
@@ -209,7 +136,7 @@ const createLinks = () => {
 	// if (!data.length) {return []}
 	return data.scenes.reduce((links, curr, i) => {
 		if(i < data.scenes.length - 1){
-			return [...links, {target: data.scenes[i].location, source: data.scenes[i+1].location, strength: 0.7}]
+			return [...links, {target: data.scenes[i].location, source: data.scenes[i+1].location, strength: 300}]
 		} else {
 			return links;
 		}

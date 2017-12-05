@@ -1,4 +1,11 @@
- <script src="script.js"></script> 
+<script>
+    // because this is meant to be a proof of concept, a global bucket is used to let the different scripts communicate
+    window['globalBucket'] = {};
+</script>
+
+<script type="text/javascript" src="dat.js"></script>
+<script type="text/javascript" src="src/overview.js"></script>
+<script type="text/javascript" src="src/main.js"></script>
  <script src="https://d3js.org/d3.v4.js"></script>
 
  <head>
