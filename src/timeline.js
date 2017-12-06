@@ -1,19 +1,17 @@
 const updateTimeline = (data) => {
     const width = parseInt(window.globalBucket.timelineSVG.style("width").replace("px", ""));
-    const timeline = window.globalBucket.timelineSVG.append('g');
-
-    console.log(data);
+    const timeline = window.globalBucket.timelineSVGG;
 
     const timeLineScenes = timeline.selectAll('.timelinescenes')
         .data(data.scenes, (d) => d);
 
     const sceneContainer = timeLineScenes.enter().append('g')
         .classed('timelinescenes', true)
-        .attr('transform', (node, i) => "translate( " +[i*100, 0].join(',') + ")")
+        .attr('transform', (node, i) => "translate( " +[i*100, 0].join(',') + ")");
 
     const drawnTimelineScenes = sceneContainer.append('rect')
         .attr('width', 100)
-        .attr('height', 100)
+        .attr('height', 50)
         .attr('fill', () => randomColor())
         .attr('stroke', 'black')
         .attr('fill', () => window.globalBucket.utils.randomColor())
@@ -24,7 +22,7 @@ const updateTimeline = (data) => {
         .text(node => node.name)
         .attr('font-size', 14)
         .attr('x', 0)
-        .attr('y', 120);
+        .attr('y', 70);
 
     drawnTimelineScenes
         .append('title').text((d) => {return d.name; });

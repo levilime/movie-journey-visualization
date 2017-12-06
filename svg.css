@@ -4,7 +4,7 @@ html, body { margin:0; padding:0; overflow:hidden }
 #timeline {
     height: 75px;
     position: fixed;
-    bottom: 5%;
+    bottom: 0%;
     width:100%;
     background-color: lightgrey;
     opacity: 1;
