@@ -3,6 +3,12 @@ window.globalBucket.activeSceneChange = (scene) => {
 
 };
 
+// time in the amount of pages
+window.globalBucket.time = 0 ;
+const timeStep = 100;
+const pagesPerSecond = 1;
+const incrementalStep = pagesPerSecond * (timeStep/1000);
+
 // put here the logic when new script data is loaded in
 window.globalBucket.newData = (data) => {
     window.globalBucket.overview(data);
@@ -32,6 +38,23 @@ const init = () => {
         .classed('timelineSVG', true);
     window.globalBucket.timelineSVGG = window.globalBucket.timelineSVG.append('g');
 
+
+    const data = window.globalBucket.data;
+    window.globalBucket.amountofPages = data.scenes[data.scenes.length - 1].endPage - data.scenes[0].startPage;
+
     // draw the timeline
     window.globalBucket.timeline.updateTimeline(window.globalBucket.data);
+};
+
+const recursivePlay = () => {
+    setTimeout(() => {
+        window.globalBucket.time += incrementalStep;
+        // subscribe here all the stuff that should change according to the time
+
+        if (window.globalBucket.time + incrementalStep < window.globalBucket.amountofPages) {
+            recursivePlay();
+        } else {
+            window.globalBucket.time = window.globalBucket.amountofPages;
+        }
+    } , timeStep)
 };

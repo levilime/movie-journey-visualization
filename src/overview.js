@@ -1,6 +1,3 @@
-const width = 200, height = 200;
-const center = {x: 200, y: 200};
-
 let svg;
 let context;
 
@@ -14,6 +11,9 @@ const updateOverview = (data) => {
 
 const updateAreas = (areaData, links) => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
+    const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
+    let center = {x: width/2, y: height/4};
+
     const svg = window.globalBucket.mainSVGG;
 
 	let areaDataList = Object.keys(areaData).map(location =>

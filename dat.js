@@ -8,7 +8,9 @@ window.globalBucket.data = {
       "character": "Levi",
       "dialog": "I'm running 30mn late !"
     }],
-    "rawscript": "---url---"
+    "rawscript": "---url---",
+    "startPage": 1,
+    "endPage": 3
   },
     {
       "id": "1",
@@ -36,7 +38,9 @@ window.globalBucket.data = {
           "dialog": "Yes, I'll also write a json file so we can start"
         }
       ],
-      "rawscript": "---url---"
+      "rawscript": "---url---",
+        "startPage": 3,
+        "endPage": 7
     },
     {
       "id": "2",
@@ -64,7 +68,9 @@ window.globalBucket.data = {
           "dialog": "Yes, I'll also write a json file so we can start"
         }
       ],
-      "rawscript": "---url---"
+      "rawscript": "---url---",
+        "startPage": 7,
+        "endPage": 9
     }
   ]
 };
