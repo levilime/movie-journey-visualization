@@ -1,47 +1,22 @@
-const mainContainer = "container";
-
 const width = 200, height = 200;
 const center = {x: 200, y: 200};
-const data = window.globalBucket.data;
 
 let svg;
 let context;
-
-window.onload = () => {init();};
-
-const init = () => {
-	svg = d3.select('#' + mainContainer)
-		  .append('svg')
-        .attr('preserveAspectRatio', 'xMinYMin meet')
-        .call(d3.zoom().on("zoom", function () {
-            svg.attr("transform", d3.event.transform)
-        }))
-		.append('g');
-		  // .attr('width', width)
-		  // .attr('height', height);
-
-	updateOverview(data);
-};
 
 /* code for the overview page
 */
 const updateOverview = (data) => {
 	const areas = getSceneData(data);
-    const links = createLinks();
+    const links = createLinks(data);
 	updateAreas(areas, links);
 };
 
-window.globalBucket.overview = {updateOverview};
-
 const updateAreas = (areaData, links) => {
+	const svg = window.globalBucket.mainSVG;
+
 	let areaDataList = Object.keys(areaData).map(location =>
 		areaData[location]);
-
-	// TODO just for testing, this currently uses the rainbowmap
-	const randomColor = () => {
-		const randomNumber = () => Math.floor(Math.random() * 255);
-		return "rgb(" + [randomNumber(), randomNumber(), randomNumber()].join(',') + ")";
-	};
 
 	areaDataList.sort((a,b) => a.firstAppearance - b.firstAppearance);
 
@@ -51,9 +26,9 @@ const updateAreas = (areaData, links) => {
     const linkElements = svg.selectAll('line')
         .data(links)
         .enter().append('line')
-        .attr('stroke-width', 5)
+        .attr('stroke-width', 3)
         .attr('z-index', 0)
-        .attr('stroke', 'black');
+        .attr('stroke', 'grey');
 
     const areaContainer = areas.enter().append('g')
     	.classed('areaData', true);
@@ -61,7 +36,7 @@ const updateAreas = (areaData, links) => {
 	const drawnAreas = areaContainer.append('rect')
 		.attr('width', 100)
 		.attr('height', 100)
-		.attr('fill', () => randomColor())
+		.attr('fill', () => window.globalBucket.utils.randomColor())
 		.attr('stroke', 'black')
 		.attr('stroke-width', 2)
 		.attr('rx', '20')
@@ -115,6 +90,8 @@ const updateAreas = (areaData, links) => {
 		target: nodeAreaConnector[link.target], strength: link.strength}});
 
     simulation.force('link').links(linksWithNodes);
+    console.log(areaContainer);
+
     simulation.nodes(areaDataList).on('tick', () => {
         areaContainer
             .attr('transform', node => "translate( " +[node.x, node.y].join(',') + ")")
@@ -131,7 +108,7 @@ const updateAreas = (areaData, links) => {
     simulation.restart();
 };
 
-const createLinks = () => {
+const createLinks = (data) => {
 	// const links = [];
 	// if (!data.length) {return []}
 	return data.scenes.reduce((links, curr, i) => {
@@ -150,7 +127,7 @@ const getSceneData = (data) => {
         if(areas[currentScene.location]) {
             areas[currentScene.location].scenes.push(currentScene);
             // TODO duration should be a better metric than incremental
-            areas[currentScene.duration] += 1;
+            areas[currentScene.location].duration += 1;
         } else {
             areas[currentScene.location] =
 				{scenes: [currentScene],
@@ -163,5 +140,7 @@ const getSceneData = (data) => {
 	return areas;
 };
 
+// create exported functions here
+window.globalBucket.overview = {updateOverview};
 
 

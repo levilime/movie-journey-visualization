@@ -41,7 +41,7 @@ window.globalBucket.data = {
     {
       "id": "2",
       "name": "Second meeting",
-      "location": "DW2 Building",
+      "location": "DW Building",
       "characters": ["Levi", "Haoming", "Valentin"],
       "script": [{
         "character": "Haoming",
