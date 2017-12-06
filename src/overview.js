@@ -13,7 +13,8 @@ const updateOverview = (data) => {
 };
 
 const updateAreas = (areaData, links) => {
-	const svg = window.globalBucket.mainSVG;
+    const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
+    const svg = window.globalBucket.mainSVGG;
 
 	let areaDataList = Object.keys(areaData).map(location =>
 		areaData[location]);
@@ -90,8 +91,6 @@ const updateAreas = (areaData, links) => {
 		target: nodeAreaConnector[link.target], strength: link.strength}});
 
     simulation.force('link').links(linksWithNodes);
-    console.log(areaContainer);
-
     simulation.nodes(areaDataList).on('tick', () => {
         areaContainer
             .attr('transform', node => "translate( " +[node.x, node.y].join(',') + ")")

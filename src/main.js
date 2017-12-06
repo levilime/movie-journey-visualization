@@ -16,11 +16,12 @@ const init = () => {
     window.globalBucket.mainSVG = d3.select('#container')
         .append('svg')
         .classed('overviewSVG', true)
-        .attr('preserveAspectRatio', 'xMinYMin meet')
+        .attr('preserveAspectRatio', 'xMinYMin meet');
+    window.globalBucket.mainSVGG = window.globalBucket.mainSVG.append('g');
+    window.globalBucket.mainSVG
         .call(d3.zoom().on("zoom", function () {
-            window.globalBucket.mainSVG.attr("transform", d3.event.transform)
-        }))
-        .append('g');
+            window.globalBucket.mainSVGG.attr("transform", d3.event.transform)
+        }));
 
     // draw the overview
     window.globalBucket.overview.updateOverview(window.globalBucket.data);
@@ -29,7 +30,7 @@ const init = () => {
     window.globalBucket.timelineSVG = d3.select('#timeline')
         .append('svg')
         .classed('timelineSVG', true);
-
+    window.globalBucket.timelineSVGG = window.globalBucket.timelineSVG.append('g');
 
     // draw the timeline
     window.globalBucket.timeline.updateTimeline(window.globalBucket.data);
