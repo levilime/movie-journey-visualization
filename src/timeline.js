@@ -5,12 +5,21 @@ const updateTimeline = (data) => {
     const timeLineScenes = timeline.selectAll('.timelinescenes')
         .data(data.scenes, (d) => d);
 
+    const amountOfPages = data.scenes[data.scenes.length - 1].endPage - data.scenes[0].startPage;
+
+    const scenePercentages = data.scenes.map(scene => (scene.endPage - scene.startPage)/amountOfPages);
+
+    let lastKnownPosition = 0;
     const sceneContainer = timeLineScenes.enter().append('g')
         .classed('timelinescenes', true)
-        .attr('transform', (node, i) => "translate( " +[i*100, 0].join(',') + ")");
+        .attr('transform', (node, i) =>
+        {
+            const previousLastKnownPosition = lastKnownPosition;
+            lastKnownPosition = lastKnownPosition + width * scenePercentages[i];
+            return "translate( " +[previousLastKnownPosition, 0].join(',') + ")"});
 
     const drawnTimelineScenes = sceneContainer.append('rect')
-        .attr('width', 100)
+        .attr('width', (node, i ) =>  scenePercentages[i] * width)
         .attr('height', 50)
         .attr('fill', () => randomColor())
         .attr('stroke', 'black')
