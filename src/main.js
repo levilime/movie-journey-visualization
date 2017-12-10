@@ -11,7 +11,7 @@ window.globalBucket.changePlay = () => {
 
 // time in the amount of pages
 window.globalBucket.time = 0 ;
-const timeStep = 100;
+const timeStep = 10;
 const pagesPerSecond = 1;
 const incrementalStep = pagesPerSecond * (timeStep/1000);
 
@@ -52,6 +52,8 @@ const init = () => {
     // draw the timeline
     timeline.updateTimeline(window.globalBucket.data);
 
+    timeline.updateTimelineProgress(0);
+    timeline.clickTimeline();
     play.init();
 };
 
@@ -59,13 +61,25 @@ const recursivePlay = () => {
     setTimeout(() => {
         window.globalBucket.time += incrementalStep;
         // subscribe here all the stuff that should change according to the time
-
-        if (window.globalBucket.time + incrementalStep < window.globalBucket.amountofPages && window.globalBucket.playStatus) {
+        timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
+        if (window.globalBucket.time / window.globalBucket.amountofPages >= 1 || window.globalBucket.time === window.globalBucket.amountofPages) {
+            window.globalBucket.time = 0;
             recursivePlay();
-        } else {
+        } else if (window.globalBucket.time + incrementalStep >= window.globalBucket.amountofPages ) {
             window.globalBucket.time = window.globalBucket.amountofPages;
+            play.switchPlayStatus(false);
+        } else if (play.playStatus) {
+            recursivePlay();
         }
     } , timeStep)
 };
+
+window.addEventListener("resize", (e) => {
+    timeline.updateTimeline(window.globalBucket.data);
+    // timeline progress pointer also has to be updated because it has to draw over the scene elements
+    timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
+    overview.changeSimulationCenter();
+});
+
 
 window.globalBucket.main = {recursivePlay};
