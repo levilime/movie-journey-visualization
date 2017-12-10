@@ -77,6 +77,8 @@ updateAreas: (areaData, links) => {
         .force("y", d3.forceY(0))
         .force("x", d3.forceX(0));
 
+    overview.simulation = simulation;
+
     simulation.force('link', d3.forceLink()
         .id(link => link.id)
         .strength(link => link.strength));
@@ -102,6 +104,18 @@ updateAreas: (areaData, links) => {
     });
 
     simulation.restart();
+},
+
+changeSimulationCenter: () => {
+    const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
+    const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
+    let center = {x: width/2, y: height/4};
+    console.log(center);
+    overview.simulation.force("center")
+        .x(center.x)
+        .y(center.y);
+
+    overview.simulation.restart();
 },
 
 createLinks: (data) => {

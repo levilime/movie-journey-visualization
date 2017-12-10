@@ -24,7 +24,10 @@ const play = {
     } else {
         elem.classList.remove(pauseIcon);
         elem.classList.add(playIcon);
-
     }
+    },
+    switchPlayStatus: (status) => {
+        play.playstatus = status;
+        play.changeIcon();
     }
 };
