@@ -36,7 +36,7 @@ const init = () => {
         }));
 
     // draw the overview
-    window.globalBucket.overview.updateOverview(window.globalBucket.data);
+    overview.updateOverview(window.globalBucket.data);
 
     // timeline
     window.globalBucket.timelineSVG = d3.select('#timeline')
@@ -50,7 +50,7 @@ const init = () => {
     window.globalBucket.startPage = data.scenes[0].startPage;
 
     // draw the timeline
-    window.globalBucket.timeline.updateTimeline(window.globalBucket.data);
+    timeline.updateTimeline(window.globalBucket.data);
 
     play.init();
 };

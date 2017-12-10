@@ -1,15 +1,12 @@
-let svg;
-let context;
+const overview = {
 
-/* code for the overview page
-*/
-const updateOverview = (data) => {
-	const areas = getSceneData(data);
-    const links = createLinks(data);
-	updateAreas(areas, links);
-};
+    updateOverview: (data) => {
+	const areas = overview.getSceneData(data);
+    const links = overview.createLinks(data);
+	overview.updateAreas(areas, links);
+},
 
-const updateAreas = (areaData, links) => {
+updateAreas: (areaData, links) => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
     const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
     let center = {x: width/2, y: height/4};
@@ -37,7 +34,7 @@ const updateAreas = (areaData, links) => {
 	const drawnAreas = areaContainer.append('rect')
 		.attr('width', 100)
 		.attr('height', 100)
-		.attr('fill', () => window.globalBucket.utils.randomColor())
+		.attr('fill', () => utils.randomColor())
 		.attr('stroke', 'black')
 		.attr('stroke-width', 2)
 		.attr('rx', '20')
@@ -105,9 +102,9 @@ const updateAreas = (areaData, links) => {
     });
 
     simulation.restart();
-};
+},
 
-const createLinks = (data) => {
+createLinks: (data) => {
 	// const links = [];
 	// if (!data.length) {return []}
 	return data.scenes.reduce((links, curr, i) => {
@@ -117,9 +114,9 @@ const createLinks = (data) => {
 			return links;
 		}
 	}, []);
-};
+},
 
-const getSceneData = (data) => {
+getSceneData: (data) => {
 	let areas = {};
 	data.scenes.forEach((currentScene, i) => {
 		// if it already exists in the areas object than at the scene to that area, otherwise add the area to the areas object
@@ -137,9 +134,6 @@ const getSceneData = (data) => {
         }
 	});
 	return areas;
-};
-
-// create exported functions here
-window.globalBucket.overview = {updateOverview};
+}};
 
 
