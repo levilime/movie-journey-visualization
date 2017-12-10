@@ -46,8 +46,8 @@ const init = () => {
 
 
     const data = window.globalBucket.data;
-    window.globalBucket.amountofPages = data.scenes[data.scenes.length - 1].endPage - data.scenes[0].startPage;
-    window.globalBucket.startPage = data.scenes[0].startPage;
+    window.globalBucket.amountofPages = data.scenes[data.scenes.length - 1].endTime - data.scenes[0].startTime;
+    window.globalBucket.startTime = data.scenes[0].startTime;
 
     // draw the timeline
     timeline.updateTimeline(window.globalBucket.data);

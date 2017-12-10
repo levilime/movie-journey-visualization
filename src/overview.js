@@ -123,7 +123,7 @@ createLinks: (data) => {
 	// if (!data.length) {return []}
 	return data.scenes.reduce((links, curr, i) => {
 		if(i < data.scenes.length - 1){
-			return [...links, {target: data.scenes[i].location, source: data.scenes[i+1].location, strength: 300}]
+			return [...links, {target: data.scenes[i].location, source: data.scenes[i+1].location, strength: 1}]
 		} else {
 			return links;
 		}
@@ -149,5 +149,3 @@ getSceneData: (data) => {
 	});
 	return areas;
 }};
-
-
