@@ -1,0 +1,13 @@
+#bottom {
+    height: 75px;
+    position: fixed;
+    bottom: 0%;
+    width:100%;
+}
+
+#play {
+    width: 75px;
+    height: 75px;
+    background-color: grey;
+    float:left;
+}

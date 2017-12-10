@@ -7,14 +7,26 @@
 <script type="text/javascript" src="src/overview.js"></script>
 <script type="text/javascript" src="src/timeline.js"></script>
 <script type="text/javascript" src="src/utils.js"></script>
+<script type="text/javascript" src="src/play.js"></script>
 <script type="text/javascript" src="src/main.js"></script>
  <script src="https://d3js.org/d3.v4.js"></script>
 
  <head>
+  <link rel="stylesheet" type="text/css" href="main.css">
   <link rel="stylesheet" type="text/css" href="svg.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
  </head>
 
+
  <body>
- <div id="container"></div>
- <div id="timeline"></div>
+  <div id="container"></div>
+  <div id="bottom">
+   <div class="play">
+    <i id="play" class="fa fa-play fa-4x" aria-hidden="true"></i>
+    <!--<i id="next" class="fa fa-step-forward" aria-hidden="true"></i> <br>-->
+    <!--<i id="previous" class="fa fa-step-backward" aria-hidden="true"></i>-->
+   </div>
+   <div id="timeline"></div>
+  </div>
+
  </body>

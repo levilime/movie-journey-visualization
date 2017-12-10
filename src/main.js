@@ -2,6 +2,12 @@
 window.globalBucket.activeSceneChange = (scene) => {
 
 };
+// whether the scene is currently playing
+window.globalBucket.playStatus = false;
+
+window.globalBucket.changePlay = () => {
+    
+};
 
 // time in the amount of pages
 window.globalBucket.time = 0 ;
@@ -41,9 +47,12 @@ const init = () => {
 
     const data = window.globalBucket.data;
     window.globalBucket.amountofPages = data.scenes[data.scenes.length - 1].endPage - data.scenes[0].startPage;
+    window.globalBucket.startPage = data.scenes[0].startPage;
 
     // draw the timeline
     window.globalBucket.timeline.updateTimeline(window.globalBucket.data);
+
+    play.init();
 };
 
 const recursivePlay = () => {
@@ -51,10 +60,12 @@ const recursivePlay = () => {
         window.globalBucket.time += incrementalStep;
         // subscribe here all the stuff that should change according to the time
 
-        if (window.globalBucket.time + incrementalStep < window.globalBucket.amountofPages) {
+        if (window.globalBucket.time + incrementalStep < window.globalBucket.amountofPages && window.globalBucket.playStatus) {
             recursivePlay();
         } else {
             window.globalBucket.time = window.globalBucket.amountofPages;
         }
     } , timeStep)
 };
+
+window.globalBucket.main = {recursivePlay};

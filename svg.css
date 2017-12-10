@@ -3,9 +3,8 @@ html, body { margin:0; padding:0; overflow:hidden }
 .timelineSVG { display: block; width:100% }
 #timeline {
     height: 75px;
-    position: fixed;
-    bottom: 0%;
-    width:100%;
+    /* https://stackoverflow.com/questions/1032914/how-to-make-a-div-to-fill-a-remaining-horizontal-space/5955286#5955286 */
+    margin-left: 76px;
     background-color: lightgrey;
     opacity: 1;
 }
