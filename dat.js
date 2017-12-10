@@ -9,8 +9,8 @@ window.globalBucket.data = {
       "dialog": "I'm running 30mn late !"
     }],
     "rawscript": "---url---",
-    "startPage": 1,
-    "endPage": 3
+    "startTime": 1,
+    "endTime": 3
   },
     {
       "id": "1",
@@ -39,8 +39,8 @@ window.globalBucket.data = {
         }
       ],
       "rawscript": "---url---",
-        "startPage": 3,
-        "endPage": 7
+        "startTime": 3,
+        "endTime": 7
     },
     {
       "id": "2",
@@ -69,8 +69,8 @@ window.globalBucket.data = {
         }
       ],
       "rawscript": "---url---",
-        "startPage": 7,
-        "endPage": 9
+        "startTime": 7,
+        "endTime": 9
     }
   ]
 };

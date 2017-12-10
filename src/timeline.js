@@ -8,9 +8,9 @@ const timeline = {
         const timeLineScenes = timeline.selectAll('.timelinescenes')
             .data(data.scenes, (d) => d);
 
-        const amountOfPages = data.scenes[data.scenes.length - 1].endPage - data.scenes[0].startPage;
+        const amountOfPages = data.scenes[data.scenes.length - 1].endTime - data.scenes[0].startTime;
 
-        const scenePercentages = data.scenes.map(scene => (scene.endPage - scene.startPage) / amountOfPages);
+        const scenePercentages = data.scenes.map(scene => (scene.endTime - scene.startTime) / amountOfPages);
 
         let lastKnownPosition = 0;
         const sceneContainer = timeLineScenes.enter().append('g')
