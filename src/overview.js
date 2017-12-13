@@ -99,7 +99,7 @@ const updateAreas= (areaData, links) => {
         .force('center', d3.forceCenter(center.x, center.y))
     	.force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
         .force("y", d3.forceY(0))
-        .force("x", d3.forceX((d,i) => Math.floor(i/10) * 1000));
+        .force("x", d3.forceX(0));
 
     overview.simulation = simulation;
 
