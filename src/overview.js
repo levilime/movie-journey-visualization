@@ -1,12 +1,14 @@
-const overview = {
+const overview = (() => {
+    const connectionLineWidth = 3;
 
-    updateOverview: (data) => {
-	const areas = overview.getSceneData(data);
-    const links = overview.createLinks(data);
-	overview.updateAreas(areas, links);
-},
+const updateOverview =  (data) => {
+	const areas = getSceneData(data);
+    const links = createLinks(data);
+	updateAreas(areas, links);
+};
 
-updateAreas: (areaData, links) => {
+
+const updateAreas= (areaData, links) => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
     const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
     let center = {x: width/2, y: height/4};
@@ -21,15 +23,31 @@ updateAreas: (areaData, links) => {
 	const areas = svg.selectAll('.areaData')
 		.data(areaDataList, (d) => d);
 
-    const linkElements = svg.selectAll('line')
+    const linkElements = svg.selectAll('.areaLine')
         .data(links)
         .enter().append('line')
-        .attr('stroke-width', 3)
+        .classed('areaLine', true)
+        .attr('stroke-width', 1)
         .attr('z-index', 0)
         .attr('stroke', 'grey');
 
+    const highlightLines = (areaName) => {
+        svg.selectAll('.areaLine')
+            .attr('stroke-width', (d) => {return d.source === areaName || d.target === areaName ? connectionLineWidth : 1})
+            .attr('stroke', (d) => {return d.source === areaName || d.target === areaName ? 'black' : 'lightgrey'})
+    };
+
+    const dissapearLines = (areaName) => {
+        svg.selectAll('.areaLine')
+            .attr('stroke-width', (d) => {return d.source === areaName || d.target === areaName ? connectionLineWidth : 0})
+    };
+    const turnLinesBack = () => svg.selectAll('.areaLine').attr('stroke-width', 1).attr('stroke', 'grey');
+
     const areaContainer = areas.enter().append('g')
-    	.classed('areaData', true);
+    	.classed('areaData', true)
+        .attr('transform', (node,i) => "translate( " +[100 * i, 100 * i].join(',') + ")")
+        .on("mouseover", d => highlightLines(d.location))
+        .on("mouseout", turnLinesBack);
 
 	const drawnAreas = areaContainer.append('rect')
 		.attr('width', 100)
@@ -41,7 +59,8 @@ updateAreas: (areaData, links) => {
         .attr('ry', '20')
         .attr('z-index', 1);
 
-    areaContainer.append('text')
+    const areaText = areaContainer.append('text')
+        .classed('areaText', true)
         .text(node => node.location)
         .attr('font-size', 14)
         .attr('x', 0)
@@ -53,7 +72,7 @@ updateAreas: (areaData, links) => {
             node.fy = node.y;
         })
         .on('drag', node => {
-            simulation.alphaTarget(0.7).restart()
+            simulation.alphaTarget(0.7).restart();
             node.fx = d3.event.x;
             node.fy = d3.event.y;
         })
@@ -70,12 +89,17 @@ updateAreas: (areaData, links) => {
 	drawnAreas
         .append('title').text((d) => {return d.location; });
 
+	// const totalScenes = data.scenes.length;
+	const strength = -100;
+	const forceperScene = 100;
+
+
     const simulation = d3.forceSimulation()
-        .force('charge', d3.forceManyBody().strength(-40)) //.strength(-40))
+        .force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
         .force('center', d3.forceCenter(center.x, center.y))
-    	.force("collide",d3.forceCollide( function(d){return 100 }).iterations(16) )
+    	.force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
         .force("y", d3.forceY(0))
-        .force("x", d3.forceX(0));
+        .force("x", d3.forceX((d,i) => Math.floor(i/10) * 1000));
 
     overview.simulation = simulation;
 
@@ -104,9 +128,16 @@ updateAreas: (areaData, links) => {
     });
 
     simulation.restart();
-},
+};
 
-changeSimulationCenter: () => {
+const zooming = (zoomFactor) => {
+    window.globalBucket.mainSVG.selectAll('.areaText')
+        .attr('font-size', 14 * (1/zoomFactor))
+    };
+
+const forceFalloff = (amount) => Math.pow(amount, 0.8);
+
+const changeSimulationCenter= () => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
     const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
     let center = {x: width/2, y: height/4};
@@ -116,11 +147,9 @@ changeSimulationCenter: () => {
         .y(center.y);
 
     overview.simulation.restart();
-},
+};
 
-createLinks: (data) => {
-	// const links = [];
-	// if (!data.length) {return []}
+const createLinks=  (data) => {
 	return data.scenes.reduce((links, curr, i) => {
 		if(i < data.scenes.length - 1){
 			return [...links, {target: data.scenes[i].location, source: data.scenes[i+1].location, strength: 1}]
@@ -128,9 +157,9 @@ createLinks: (data) => {
 			return links;
 		}
 	}, []);
-},
+};
 
-getSceneData: (data) => {
+const getSceneData= (data) => {
 	let areas = {};
 	data.scenes.forEach((currentScene, i) => {
 		// if it already exists in the areas object than at the scene to that area, otherwise add the area to the areas object
@@ -148,4 +177,7 @@ getSceneData: (data) => {
         }
 	});
 	return areas;
-}};
+};
+
+return {updateOverview, updateAreas, changeSimulationCenter, zooming};
+})();
