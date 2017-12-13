@@ -1,5 +1,5 @@
-const timeline = {
-    updateTimeline: (data) => {
+const timeline = (() => {
+   const updateTimeline =  (data) => {
         const width = timelineUtilcalculateTimelineWidth();
         const timeline = window.globalBucket.timelineSVGG;
 
@@ -39,8 +39,8 @@ const timeline = {
             .append('title').text((d) => {
             return d.name;
         });
-    },
-    clickTimeline: () => {
+    };
+    clickTimeline= () => {
         const svgtimeline = window.globalBucket.timelineSVG._groups[0][0];
         svgtimeline.addEventListener("click", (e) => {
             const svgxpos = svgtimeline.getBoundingClientRect().x;
@@ -49,9 +49,8 @@ const timeline = {
             window.globalBucket.time =  progress * window.globalBucket.amountofPages;
             if (!play.playStatus) recursivePlay()
         })
-    },
-    calculateTimelineWidth: () => parseInt(window.globalBucket.timelineSVG.style("width").replace("px", "")),
-    updateTimelineProgress: (progress) => {
+    };
+    const updateTimelineProgress =  (progress) => {
         const data = [{progress}];
         const timeline = window.globalBucket.timelineSVGG;
         timeline.selectAll(".progress").remove();
@@ -77,7 +76,8 @@ const timeline = {
             .attr('y1', link => 0)
             .attr('x2', link => 0)
             .attr('y2', link => 70);
-    }
-};
+    };
+    const timelineUtilcalculateTimelineWidth = () => parseInt(window.globalBucket.timelineSVG.style("width").replace("px", ""));
+    return {updateTimeline, updateTimelineProgress, clickTimeline};
+})();
 
-const timelineUtilcalculateTimelineWidth = () => parseInt(window.globalBucket.timelineSVG.style("width").replace("px", ""));

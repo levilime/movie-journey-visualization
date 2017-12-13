@@ -30,11 +30,17 @@ const init = () => {
         .classed('overviewSVG', true)
         .attr('preserveAspectRatio', 'xMinYMin meet');
     window.globalBucket.mainSVGG = window.globalBucket.mainSVG.append('g');
+    console.log(window.globalBucket.mainSVGG);
     window.globalBucket.mainSVG
         .call(d3.zoom().on("zoom", function () {
-            window.globalBucket.mainSVGG.attr("transform", d3.event.transform)
-        }));
+            // events for zooming
+            window.globalBucket.mainSVGG.attr("transform", d3.event.transform);
+            if (!window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform")) return;
+            const zoomFactor = Number(window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform").split(' ')
+                .filter(x => x.startsWith('scale'))[0].substr(6).slice(0, -1));
+            overview.zooming(zoomFactor);
 
+        }));
     // draw the overview
     overview.updateOverview(window.globalBucket.data);
 
