@@ -3,8 +3,6 @@
     window['globalBucket'] = {};
 </script>
 
-<!--<script type="text/javascript" src="dat.js"></script>-->
-<script type="text/javascript" src="earl.js"></script>
 <script type="text/javascript" src="src/overview.js"></script>
 <script type="text/javascript" src="src/timeline.js"></script>
 <script type="text/javascript" src="src/utils.js"></script>
@@ -14,6 +12,11 @@
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+<!-- load the scripts -->
+<script type="text/javascript" src="scripts/earl.js"></script>
+<script type="text/javascript" src="scripts/lord1.js"></script>
+<script type="text/javascript" src="scripts/bladerunner.js"></script>
 
  <head>
   <title>Movie script visualisation</title>
@@ -36,9 +39,7 @@
    <ul class="navbar-nav mr-auto">
     <li class="nav-item dropdown">
      <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Movies</a>
-     <div class="dropdown-menu" aria-labelledby="dropdown01">
-      <a class="dropdown-item" href="#">Me Earl and the dying girl</a>
-      <a class="dropdown-item" href="#">Lord of the rings</a>
+     <div id="moviedropdown" class="dropdown-menu" aria-labelledby="dropdown01">
      </div>
     </li>
     <li class="nav-item dropdown">
@@ -52,7 +53,7 @@
      </div>
     </li>
     <li class="nav-item">
-     <a class="nav-link" href="#">Info <span class="sr-only">(current)</span></a>
+     <a class="nav-link" onclick="alert('Movie Script visualisation by: Levi van Aanholt, Hao Ming Yeh and Valentin Gerald');">Info <span class="sr-only">(current)</span></a>
     </li>
    </ul>
    <!--<form class="form-inline my-2 my-lg-0">-->
