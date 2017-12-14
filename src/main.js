@@ -26,6 +26,7 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.data = data;
     overview.updateOverview(data);
     timeline.updateTimeline(window.globalBucket.data);
+    window.globalBucket.currentSceneIndex = 0;
     window.globalBucket.time = 0;
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
 };
@@ -34,16 +35,23 @@ window.onload = () => {init();};
 
 const prepareMovieDropdown = () => {
     const dropdown = document.getElementById('moviedropdown');
-    window.globalBucket.currentSceneIndex = 0;
     Object.keys(window.globalBucket.script).map(k => {
         const name = window.globalBucket.script[k].name;
         dropdown.insertAdjacentHTML('beforeend', '<a class="dropdown-item" onclick="window.globalBucket.newDataFromkey('+"'"+k+"'"+')">' + name + '</a>');
 })
 };
 
+const prepareGraphOptionsDropdown = () => {
+    const dropdown = document.getElementById('graphoptionsdropdown');
+    Object.keys(overview.forceGraphRepresentations).map(k => {
+        dropdown.insertAdjacentHTML('beforeend', '<a class="dropdown-item" onclick="overview.updateOverview(window.globalBucket.data, '+"'"+k+"'"+')">' + k + '</a>');
+    })
+};
+
 // initialization of all main draw elements
 const init = () => {
     prepareMovieDropdown();
+    prepareGraphOptionsDropdown();
     window.globalBucket.currentSceneIndex = 0;
 
     // overview SVG
