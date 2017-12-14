@@ -20,6 +20,13 @@ const updateAreas= (areaData, links) => {
 
 	areaDataList.sort((a,b) => a.firstAppearance - b.firstAppearance);
 
+
+    svg.selectAll('.areaData')
+        .remove();
+
+    svg.selectAll('.areaLine')
+        .remove();
+
 	const areas = svg.selectAll('.areaData')
 		.data(areaDataList, (d) => d);
 
@@ -133,6 +140,7 @@ const updateAreas= (areaData, links) => {
 const zooming = (zoomFactor) => {
     window.globalBucket.mainSVG.selectAll('.areaText')
         .attr('font-size', 14 * (1/zoomFactor))
+        .attr('y', 110 + 10 * (1/zoomFactor));
     };
 
 const forceFalloff = (amount) => Math.pow(amount, 0.8);
@@ -141,7 +149,6 @@ const changeSimulationCenter= () => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
     const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
     let center = {x: width/2, y: height/4};
-    console.log(center);
     overview.simulation.force("center")
         .x(center.x)
         .y(center.y);
