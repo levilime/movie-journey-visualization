@@ -6,8 +6,6 @@ const updateOverview =  (data, graphoption) => {
     const links = createLinks(data);
 	updateAreas(areas, links, graphoption);
 };
-    const strength = -100;
-    const forceperScene = 100;
 
 const getCenter = ()    => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
@@ -158,6 +156,8 @@ const changeForceGraph = (key) => {
 
 const forceCenter = () => {
     const center = getCenter();
+    const strength = -100;
+    const forceperScene = 100;
     return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
         .force('center', d3.forceCenter(center.x, center.y))
         .force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
@@ -168,19 +168,20 @@ const forceCenter = () => {
 const forceChronoCluster = () => {
     const center = getCenter();
     let counter = 0;
+    const strength = -100;
+    const forceperScene = 100;
     const xIncrease = 1000;
-
     return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
         .force('center', d3.forceCenter(center.x, center.y))
         .force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
         .force("y", d3.forceY(d => d.scenes.length > 2 ? -1000: 0))
-        .force("x", d3.forceX(d => {
+        .force("x", d3.forceX((d,i) => {
             if (d.scenes.length > 2) {
                 const oldcounter = counter;
                 counter ++;
                 return oldcounter * xIncrease;
             } else {
-                return counter* xIncrease;
+                return counter* xIncrease + i * 10;
             }
         }));
 };
