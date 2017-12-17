@@ -62,6 +62,7 @@ const init = () => {
             overview.zooming(zoomFactor);
 
         }));
+    // setInterval(() => {characters.updateClusters();}, 100);
     // draw the overview
     // overview.updateOverview(window.globalBucket.data);
 

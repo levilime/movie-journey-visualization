@@ -133,7 +133,7 @@ const updateAreas= (areaData, links) => {
             .attr('x2', link => parseFloat(nodeAreaConnector[link.target].getAttribute('vx')) + 50)
             .attr('y2', link => parseFloat(nodeAreaConnector[link.target].getAttribute('vy')) + 50);
         // if (characters) {
-            characters.updateClusterCenters();
+            characters.updateClusters();
         // }
     });
 
