@@ -8,3 +8,7 @@ html, body { margin:0; padding:0; overflow:hidden }
     background-color: lightgrey;
     opacity: 1;
 }
+
+.areaLine {
+    fill-opacity:0
+}

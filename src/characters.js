@@ -3,7 +3,6 @@ const characters = (() => {
     const updateCharacters = (data) => {
         initClusters();
         updateChars(data);
-        // initClusters();
     };
 
     const updateChars = (data) => {
@@ -89,7 +88,7 @@ const characters = (() => {
         //clusters
         getClusterCenters();
         characters.simulation.force('cluster', d3.forceCluster().centers((item) => {
-                return clusters.find((cluster) => cluster.name === item.location);}).strength(0.5))
+                return clusters.find((cluster) => cluster.name === item.location);}).strength(1.0))
             .nodes(svg.selectAll('.charData').data()).alpha(0.5)
             .on('tick', tickClusters).restart();
     };
@@ -100,7 +99,7 @@ const characters = (() => {
         const svg = window.globalBucket.mainSVGG;
         const simulation = d3.forceSimulation()
             .force('cluster', d3.forceCluster().centers((item) => {
-                    return clusters.find((cluster) => cluster.name === item.location);}).strength(0.5))
+                    return clusters.find((cluster) => cluster.name === item.location);}).strength(1.0))
             .force('collide', d3.forceCollide((d) => { return 20; }))
             .on('tick', tickClusters).nodes(svg.selectAll('.charData').data());
         characters.simulation = simulation;

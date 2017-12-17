@@ -26,24 +26,38 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.data = data;
     overview.updateOverview(data);
     timeline.updateTimeline(window.globalBucket.data);
+    window.globalBucket.currentSceneIndex = 0;
     window.globalBucket.time = 0;
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
+    changeMovieHeader(data.name);
 };
 
 window.onload = () => {init();};
 
+const changeMovieHeader = (name) => {
+    const header = document.getElementById('movieheader');
+    header.innerText = name;
+}
+
 const prepareMovieDropdown = () => {
     const dropdown = document.getElementById('moviedropdown');
-    window.globalBucket.currentSceneIndex = 0;
     Object.keys(window.globalBucket.script).map(k => {
         const name = window.globalBucket.script[k].name;
         dropdown.insertAdjacentHTML('beforeend', '<a class="dropdown-item" onclick="window.globalBucket.newDataFromkey('+"'"+k+"'"+')">' + name + '</a>');
 })
 };
 
+const prepareGraphOptionsDropdown = () => {
+    const dropdown = document.getElementById('graphoptionsdropdown');
+    Object.keys(overview.forceGraphRepresentations).map(k => {
+        dropdown.insertAdjacentHTML('beforeend', '<a class="dropdown-item" onclick="overview.updateOverview(window.globalBucket.data, '+"'"+k+"'"+')">' + k + '</a>');
+    })
+};
+
 // initialization of all main draw elements
 const init = () => {
     prepareMovieDropdown();
+    prepareGraphOptionsDropdown();
     window.globalBucket.currentSceneIndex = 0;
 
     // overview SVG
@@ -93,8 +107,9 @@ const recursivePlay = () => {
         window.globalBucket.time += incrementalStep;
 
         const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
-        if (window.globalBucket.time >= currentScene.endTime && window.globalBucket.currentSceneIndex < window.globalBucket.data.scenes.length - 1) {
-            window.globalBucket.currentSceneIndex++;
+        if (window.globalBucket.time >= currentScene.endTime || window.globalBucket.time < currentScene.startTime) {
+            window.globalBucket.currentSceneIndex = window.globalBucket.data.scenes.findIndex((scene) => scene.startTime <= window.globalBucket.time &&
+                scene.endTime > window.globalBucket.time);
             window.globalBucket.activeSceneChange(window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex]);
         }
         timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
