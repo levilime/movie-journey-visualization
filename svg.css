@@ -1,5 +1,5 @@
 html, body { margin:0; padding:0; overflow:hidden }
-.overviewSVG { position:fixed; top:0; left:0; height:100%; width:100% }
+.overviewSVG { position:fixed; top:0; left:0; height:100%; width:75% }
 .timelineSVG { display: block; width:100% }
 #timeline {
     height: 75px;
@@ -7,8 +7,4 @@ html, body { margin:0; padding:0; overflow:hidden }
     margin-left: 76px;
     background-color: lightgrey;
     opacity: 1;
-}
-
-.areaLine {
-    fill-opacity:0
 }
