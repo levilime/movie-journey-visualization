@@ -2,7 +2,7 @@ window.globalBucket.script = {}; // bucket for the scripts
 
 // put here the logic that should happen when the scene changes
 window.globalBucket.activeSceneChange = (scene) => {
-
+    characters.updateCharacters(window.globalBucket.data);
 };
 // whether the scene is currently playing
 window.globalBucket.playStatus = false;
