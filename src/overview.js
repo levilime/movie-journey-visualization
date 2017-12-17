@@ -1,17 +1,19 @@
 const overview = (() => {
     const connectionLineWidth = 3;
 
-const updateOverview =  (data) => {
+const updateOverview =  (data, graphoption) => {
 	const areas = getSceneData(data);
     const links = createLinks(data);
-	updateAreas(areas, links);
+	updateAreas(areas, links, graphoption);
 };
 
-
-const updateAreas= (areaData, links) => {
+const getCenter = ()    => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
     const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
-    let center = {x: width/2, y: height/4};
+    return {x: width/2, y: height/4};
+    };
+const updateAreas= (areaData, links, graphoption) => {
+    let center = getCenter();
 
     const svg = window.globalBucket.mainSVGG;
 
@@ -97,17 +99,18 @@ const updateAreas= (areaData, links) => {
         .append('title').text((d) => {return d.location; });
 
 	// const totalScenes = data.scenes.length;
-	const strength = -100;
-	const forceperScene = 100;
 
 
-    const simulation = d3.forceSimulation()
-        .force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
-        .force('center', d3.forceCenter(center.x, center.y))
-    	.force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
-        .force("y", d3.forceY(0))
-        .force("x", d3.forceX(0));
 
+    // const simulation = d3.forceSimulation()
+    //     .force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
+    //     .force('center', d3.forceCenter(center.x, center.y))
+    // 	.force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
+    //     .force("y", d3.forceY(0))
+    //     .force("x", d3.forceX(0));
+
+    graphoption = graphoption ? graphoption : 'Centered';
+    const simulation =changeForceGraph(graphoption);
     overview.simulation = simulation;
 
     simulation.force('link', d3.forceLink()
@@ -145,16 +148,56 @@ const zooming = (zoomFactor) => {
 
 const forceFalloff = (amount) => Math.pow(amount, 0.8);
 
-const changeSimulationCenter= () => {
-    const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
-    const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
-    let center = {x: width/2, y: height/4};
-    overview.simulation.force("center")
-        .x(center.x)
-        .y(center.y);
-
-    overview.simulation.restart();
+const changeForceGraph = (key) => {
+    if(key in forceGraphRepresentations){
+        return forceGraphRepresentations[key]();
+    }
 };
+
+const forceCenter = () => {
+    const center = getCenter();
+    const strength = -100;
+    const forceperScene = 100;
+    return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
+        .force('center', d3.forceCenter(center.x, center.y))
+        .force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
+        .force("y", d3.forceY(0))
+        .force("x", d3.forceX(0));
+};
+
+const forceChronoCluster = () => {
+    const center = getCenter();
+    let counter = 0;
+    const strength = -100;
+    const forceperScene = 100;
+    const xIncrease = 1000;
+    return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
+        .force('center', d3.forceCenter(center.x, center.y))
+        .force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
+        .force("y", d3.forceY(d => d.scenes.length > 2 ? -1000: 0))
+        .force("x", d3.forceX((d,i) => {
+            if (d.scenes.length > 2) {
+                const oldcounter = counter;
+                counter ++;
+                return oldcounter * xIncrease;
+            } else {
+                return counter* xIncrease + i * 10;
+            }
+        }));
+};
+    const forceGraphRepresentations = {
+        "Centered": forceCenter,
+        "Chronologically clustestered": forceChronoCluster
+    };
+
+    const changeSimulationCenter= () => {
+        const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
+        const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
+        let center = {x: width/2, y: height/4};
+        overview.simulation.force("center")
+            .x(center.x)
+            .y(center.y);
+    };
 
 const createLinks=  (data) => {
 	return data.scenes.reduce((links, curr, i) => {
@@ -186,5 +229,5 @@ const getSceneData= (data) => {
 	return areas;
 };
 
-return {updateOverview, updateAreas, changeSimulationCenter, zooming};
+return {updateOverview, updateAreas, changeSimulationCenter, zooming, forceGraphRepresentations, changeForceGraph};
 })();
