@@ -1,0 +1,1 @@
+window.globalBucket.script.lord2 = {name: "the Lord of the Rings: The Two Towers", scenes: };
