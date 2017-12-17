@@ -29,9 +29,15 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.currentSceneIndex = 0;
     window.globalBucket.time = 0;
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
+    changeMovieHeader(data.name);
 };
 
 window.onload = () => {init();};
+
+const changeMovieHeader = (name) => {
+    const header = document.getElementById('movieheader');
+    header.innerText = name;
+}
 
 const prepareMovieDropdown = () => {
     const dropdown = document.getElementById('moviedropdown');

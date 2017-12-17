@@ -32,13 +32,27 @@ const updateAreas= (areaData, links, graphoption) => {
 	const areas = svg.selectAll('.areaData')
 		.data(areaDataList, (d) => d);
 
+    svg.append("defs").selectAll("marker")
+        .data(["arrowpoint"])
+        .enter().append("marker")
+        .attr("id", function(d) { return d; })
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 15)
+        .attr("refY", -1.5)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5");
+
     const linkElements = svg.selectAll('.areaLine')
         .data(links)
-        .enter().append('line')
+        .enter().append('path')
         .classed('areaLine', true)
         .attr('stroke-width', 1)
         .attr('z-index', 0)
-        .attr('stroke', 'grey');
+        .attr('stroke', 'grey')
+        .attr("marker-end", function(d) { return "url(#" + "arrowpoint" + ")"; });
 
     const highlightLines = (areaName) => {
         svg.selectAll('.areaLine')
@@ -98,17 +112,6 @@ const updateAreas= (areaData, links, graphoption) => {
 	drawnAreas
         .append('title').text((d) => {return d.location; });
 
-	// const totalScenes = data.scenes.length;
-
-
-
-    // const simulation = d3.forceSimulation()
-    //     .force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
-    //     .force('center', d3.forceCenter(center.x, center.y))
-    // 	.force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
-    //     .force("y", d3.forceY(0))
-    //     .force("x", d3.forceX(0));
-
     graphoption = graphoption ? graphoption : 'Centered';
     const simulation =changeForceGraph(graphoption);
     overview.simulation = simulation;
@@ -120,7 +123,7 @@ const updateAreas= (areaData, links, graphoption) => {
 	let nodeAreaConnector = {};
     areaDataList.forEach((area,i) => nodeAreaConnector[area.location] =  areaContainer.nodes()[i]);
 
-    const linksWithNodes = links.map(link => { return {source: nodeAreaConnector[link.source],
+    const linksWithNodes = links.filter(link => link.source === link.target).map(link => { return {source: nodeAreaConnector[link.source],
 		target: nodeAreaConnector[link.target], strength: link.strength}});
 
     simulation.force('link').links(linksWithNodes);
@@ -131,13 +134,33 @@ const updateAreas= (areaData, links, graphoption) => {
         	.attr('vy', node => node.y);
         linkElements
 			// TODO hardcoded center of rectangle here for testing
-            .attr('x1', link => parseFloat(nodeAreaConnector[link.source].getAttribute('vx')) + 50)
-            .attr('y1', link => parseFloat(nodeAreaConnector[link.source].getAttribute('vy')) + 50)
-            .attr('x2', link => parseFloat(nodeAreaConnector[link.target].getAttribute('vx')) + 50)
-            .attr('y2', link => parseFloat(nodeAreaConnector[link.target].getAttribute('vy')) + 50);
+            .attr("d", (link) => {
+                const x1 = parseFloat(nodeAreaConnector[link.source].getAttribute('vx')) + 50;
+                const y1 = parseFloat(nodeAreaConnector[link.source].getAttribute('vy')) + 50;
+                const x2 = parseFloat(nodeAreaConnector[link.target].getAttribute('vx')) + 50;
+                const y2 = parseFloat(nodeAreaConnector[link.target].getAttribute('vy')) + 50;
+
+                const circle1 = pointOnCircle(x2, y2, x1, y1, 50);
+                const circle2 = pointOnCircle(x1, y1,x2, y2, 50);
+
+                const d = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                if(d > 0) {
+                    return "M" + [circle1.x, circle1.y + "A" + d, d + " 0 0,1 " + circle2.x, circle2.y].join(', ');
+                } else {
+                    return "M" + [x1, y1 + "A" + d, d + " 0 0,1 " + x1, y2].join(', ');
+                }
+
+            })
     });
 
     simulation.restart();
+};
+
+const pointOnCircle = (cx, cy, px, py, radius) => {
+    const vx = px- cx;
+    const vy = py - cy;
+    const distance = Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2));
+    return {x: cx + vx / distance * radius, y: cy + vy / distance * radius};
 };
 
 const zooming = (zoomFactor) => {
@@ -216,11 +239,11 @@ const getSceneData= (data) => {
         if(areas[currentScene.location]) {
             areas[currentScene.location].scenes.push(currentScene);
             // TODO duration should be a better metric than incremental
-            areas[currentScene.location].duration += 1;
+            areas[currentScene.location].duration += currentScene.endTime - currentScene.startTime;
         } else {
             areas[currentScene.location] =
 				{scenes: [currentScene],
-					duration: 1,
+					duration: currentScene.endTime - currentScene.startTime,
 					location: currentScene.location,
 					firstAppearance: i,
 					id: currentScene.location}
