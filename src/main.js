@@ -8,7 +8,7 @@ window.globalBucket.activeSceneChange = (scene) => {
 window.globalBucket.playStatus = false;
 
 window.globalBucket.changePlay = () => {
-    
+
 };
 
 // time in the amount of pages
@@ -30,6 +30,8 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.time = 0;
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
     changeMovieHeader(data.name);
+    characters.initCharacters(data);
+    prepareCharacterList();
 };
 
 window.onload = () => {init();};
@@ -54,6 +56,21 @@ const prepareGraphOptionsDropdown = () => {
     })
 };
 
+const prepareCharacterList = () => {
+  const list = document.querySelector('#characters ul');
+  while(list.lastChild) {
+      list.removeChild(list.lastChild);
+  }
+  let chars = window.globalBucket.data.scenes.map((scene) => scene.characters);
+    chars = [].concat.apply([], chars);
+    chars = chars.filter((char, index, inputArray) => {
+        return inputArray.indexOf(char) == index;
+    });
+    chars.forEach((char) => {
+        list.insertAdjacentHTML('beforeend', '<li>' + char + '</li>')
+    });
+};
+
 // initialization of all main draw elements
 const init = () => {
     prepareMovieDropdown();
@@ -76,7 +93,7 @@ const init = () => {
             overview.zooming(zoomFactor);
 
         }));
-    // setInterval(() => {characters.updateClusters();}, 100);
+    setInterval(() => {characters.updateClusters();}, 25);
     // draw the overview
     // overview.updateOverview(window.globalBucket.data);
 
@@ -94,6 +111,7 @@ const init = () => {
 
     // draw the timeline
     // timeline.updateTimeline(window.globalBucket.data);
+    prepareCharacterList();
 
     window.globalBucket.newData(data);
 
@@ -119,7 +137,7 @@ const recursivePlay = () => {
         } else if (window.globalBucket.time + incrementalStep >= window.globalBucket.amountofPages ) {
             window.globalBucket.time = window.globalBucket.amountofPages;
             play.switchPlayStatus(false);
-        } else if (play.playStatus) {
+        } else if (play.playStatus && !play.transitionStatus) {
             recursivePlay();
         }
         // subscribe here all the stuff that should change according to the time

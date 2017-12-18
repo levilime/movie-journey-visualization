@@ -15,3 +15,15 @@
 #movieheader {
     color: white
 }
+
+#characters {
+    position: fixed;
+    top: 75px;
+    left: 20px;
+    z-index: 10;
+    max-height: 30vh;
+}
+
+#characters .card-block{
+    overflow-y: scroll;
+}

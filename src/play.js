@@ -5,6 +5,7 @@ const pauseIcon = "fa-pause";
 
 const play = {
     playStatus: false,
+    transitionStatus: false,
     init : ()=>{
         document.getElementById(buttonId).addEventListener("click", () => {
             if (play.playStatus) {

@@ -151,7 +151,7 @@ const updateAreas= (areaData, links, graphoption) => {
                 }
 
             });
-    characters.updateClusters();
+    // characters.updateClusters();
     });
 
     simulation.restart();
