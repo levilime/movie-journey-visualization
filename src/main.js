@@ -105,7 +105,7 @@ const recursivePlay = () => {
             //console.log("current scen index:" +window.globalBucket.currentSceneIndex);
             window.globalBucket.activeSceneChange(window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex]);
             // load dialog in each new scene
-            if(dialogActive){loadDialogs(currentScene);}
+            if(dialogActive){loadDialogs2(currentScene);}
         }
         timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
         if (window.globalBucket.time / window.globalBucket.amountofPages >= 1 || window.globalBucket.time === window.globalBucket.amountofPages) {
@@ -144,12 +144,12 @@ const loadDialogs = (currentScene) => {
             if(lastCh!=JSON.stringify(currentScript.character)){
                 altBool++;
             }
-            console.log(altBool);
+            //console.log(altBool);
 
             if(altBool%2 == 0){
-                document.getElementById("dialog").innerHTML+= '<div class="bubble"><div class="txt"><p class="name">'+currentScript.character+'</p><p class="message">'+currentScript.dialog+'</p><span class="timestamp">8:00 am</span></div><div class="bubble-arrow"></div>' ;
+                document.getElementById("dialog").innerHTML+= '<div class="bubble"><div class="txt"><p class="name">'+currentScript.character+'</p><p class="message">'+currentScript.dialog+'</p><span class="timestamp">'+currentScript.startTime+'</span></div><div class="bubble-arrow"></div>' ;
             }else{
-                document.getElementById("dialog").innerHTML+= '<div class="bubble alt"><div class="txt"><p class="name alt">'+currentScript.character+'</p><p class="message">'+currentScript.dialog+'</p><span class="timestamp">8:00 am</span></div><div class="bubble-arrow alt"></div>' ;
+                document.getElementById("dialog").innerHTML+= '<div class="bubble alt"><div class="txt"><p class="name alt">'+currentScript.character+'</p><p class="message">'+currentScript.dialog+'</p><span class="timestamp">'+currentScript.startTime+'</span></div><div class="bubble-arrow alt"></div>' ;
             }
             lastCh=JSON.stringify(currentScript.character);
 
@@ -158,6 +158,61 @@ const loadDialogs = (currentScene) => {
     document.getElementById("dialog").innerHTML+='<div class="space"><div>'
 };
 
+const loadDialogs2 = (currentScene) =>  {
+    var lastCh="";
+    var altBool=0;
+    const dialogList = [];
+
+    const dialogContainer = d3.select("#dialog");
+    const callDialogs=dialogContainer.selectAll(".bubble").data(currentScene.script);
+
+    
+
+    
+
+    const dBubble=callDialogs.enter().append('div').classed('bubble',true).classed('alt',currentScript=>{
+        var result;
+        if(lastCh!=callDialogs.character){
+            altBool++;
+        }
+        if(altBool%2 == 0){
+            result = false;
+        }else{
+            result = true;
+        }
+        lastCh=callDialogs.character;
+        
+        console.log(altBool);
+        console.log(lastCh);
+        return result;
+    });
+
+    dBubble.append('div').classed("txt",true).append('p').classed("txt", true).classed('alt',currentScript=>{
+        if(altBool%2 == 0){
+            result = false;
+        }else{
+            result = true;
+        }
+    }).text(callDialogs.character).append('p').classed('message',true).text(callDialogs.dialog).append('span').classed('timestamp').text(callDialogs.startTime);
+
+    dBubble.append('div').classed('bubble-arrow',true).classed('alt',currentScript=>{
+        if(altBool%2 == 0){
+            result = false;
+        }else{
+            result = true;
+        }
+    });
+
+
+
+
+
+    
+            
+         
+
+
+}
 
 // Show/Hide dialog pannel
 var dialogActive = true;
