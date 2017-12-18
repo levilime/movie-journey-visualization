@@ -30,7 +30,7 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.time = 0;
     window.globalBucket.currentSceneIndex = 0;
     //load the first scene dialog
-    if(dialogActive){loadDialogs(window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex]);}
+    if(dialogActive){loadDialogs2(window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex]);}
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
 };
 
@@ -133,43 +133,43 @@ window.addEventListener("resize", (e) => {
 window.globalBucket.main = {recursivePlay};
 
 //function which add the discussion bubble to the dialog pannel div
-const loadDialogs = (currentScene) => {
-    var lastCh="";
-    var altBool=0;
-
-    document.getElementById("dialog").innerHTML='<div class="space"><div>'
-
-    currentScene.script.forEach((currentScript, i) => {
-            
-            if(lastCh!=JSON.stringify(currentScript.character)){
-                altBool++;
-            }
-            //console.log(altBool);
-
-            if(altBool%2 == 0){
-                document.getElementById("dialog").innerHTML+= '<div class="bubble"><div class="txt"><p class="name">'+currentScript.character+'</p><p class="message">'+currentScript.dialog+'</p><span class="timestamp">'+currentScript.startTime+'</span></div><div class="bubble-arrow"></div>' ;
-            }else{
-                document.getElementById("dialog").innerHTML+= '<div class="bubble alt"><div class="txt"><p class="name alt">'+currentScript.character+'</p><p class="message">'+currentScript.dialog+'</p><span class="timestamp">'+currentScript.startTime+'</span></div><div class="bubble-arrow alt"></div>' ;
-            }
-            lastCh=JSON.stringify(currentScript.character);
-
-        });
-
-    document.getElementById("dialog").innerHTML+='<div class="space"><div>'
-};
+// const loadDialogs = (currentScene) => {
+//     var lastCh="";
+//     var altBool=0;
+//
+//     document.getElementById("dialog").innerHTML='<div class="space"><div>'
+//
+//     currentScene.script.forEach((currentScript, i) => {
+//
+//             if(lastCh!=JSON.stringify(currentScript.character)){
+//                 altBool++;
+//             }
+//             //console.log(altBool);
+//
+//             if(altBool%2 == 0){
+//                 document.getElementById("dialog").innerHTML+= '<div class="bubble"><div class="txt"><p class="name">'+currentScript.character+'</p><p class="message">'+currentScript.dialog+'</p><span class="timestamp">'+currentScript.startTime+'</span></div><div class="bubble-arrow"></div>' ;
+//             }else{
+//                 document.getElementById("dialog").innerHTML+= '<div class="bubble alt"><div class="txt"><p class="name alt">'+currentScript.character+'</p><p class="message">'+currentScript.dialog+'</p><span class="timestamp">'+currentScript.startTime+'</span></div><div class="bubble-arrow alt"></div>' ;
+//             }
+//             lastCh=JSON.stringify(currentScript.character);
+//
+//         });
+//
+//     document.getElementById("dialog").innerHTML+='<div class="space"><div>'
+// };
 
 const loadDialogs2 = (currentScene) =>  {
     var lastCh="";
     var altBool=0;
-    const dialogList = [];
 
     const dialogContainer = d3.select("#dialog");
+
     const callDialogs=dialogContainer.selectAll(".bubble").data(currentScene.script);
+    // TODO fix this by putting into bootstrap container
+    dialogContainer.selectAll('.space').remove();
+    dialogContainer.append('div').classed('space', true);
 
-    
-
-    
-
+    callDialogs.exit().remove();
     const dBubble=callDialogs.enter().append('div').classed('bubble',true).classed('alt',currentScript=>{
         var result;
         if(lastCh!=callDialogs.character){
@@ -181,11 +181,10 @@ const loadDialogs2 = (currentScene) =>  {
             result = true;
         }
         lastCh=callDialogs.character;
-        
-        console.log(altBool);
-        console.log(lastCh);
         return result;
     });
+
+    console.log(currentScene);
 
     dBubble.append('div').classed("txt",true).append('p').classed("txt", true).classed('alt',currentScript=>{
         if(altBool%2 == 0){
@@ -193,8 +192,9 @@ const loadDialogs2 = (currentScene) =>  {
         }else{
             result = true;
         }
-    }).text(callDialogs.character).append('p').classed('message',true).text(callDialogs.dialog).append('span').classed('timestamp').text(callDialogs.startTime);
+    }).text(callDialogs.character);
 
+    dBubble.append('p').classed('message',true).text(currentScript => currentScript.dialog).append('span'); //.classed('timestamp').text(currentScript => currentScript.startTime);
     dBubble.append('div').classed('bubble-arrow',true).classed('alt',currentScript=>{
         if(altBool%2 == 0){
             result = false;
@@ -205,8 +205,8 @@ const loadDialogs2 = (currentScene) =>  {
 
 
 
-
-
+    // TODO fix this by putting into bootstrap container
+    dialogContainer.append('div').classed('space', true);
     
             
          
