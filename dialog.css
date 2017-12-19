@@ -1,3 +1,11 @@
+.hidden {
+    display:none;
+}
+
+.shown {
+    display:inline;
+}
+
 
 #dialogPannel{
     float:right;
