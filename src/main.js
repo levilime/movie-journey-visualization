@@ -32,6 +32,9 @@ window.globalBucket.newData = (data) => {
     changeMovieHeader(data.name);
     characters.initCharacters(data);
     prepareCharacterList();
+    //load the first scene dialog
+    if(dialog.dialogActive){dialog.loadDialogs(window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex]);}
+    timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
 };
 
 window.onload = () => {init();};
@@ -118,13 +121,14 @@ const init = () => {
     timeline.updateTimelineProgress(0);
     timeline.clickTimeline();
     play.init();
+    dialog.dialogLayout();
 };
 
 const recursivePlay = () => {
     setTimeout(() => {
         window.globalBucket.time += incrementalStep;
-
         const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
+        if(dialog.dialogActive){dialog.loadDialogs(currentScene);}
         if (window.globalBucket.time >= currentScene.endTime || window.globalBucket.time < currentScene.startTime) {
             window.globalBucket.currentSceneIndex = window.globalBucket.data.scenes.findIndex((scene) => scene.startTime <= window.globalBucket.time &&
                 scene.endTime > window.globalBucket.time);
@@ -151,6 +155,5 @@ window.addEventListener("resize", (e) => {
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
     overview.changeSimulationCenter();
 });
-
 
 window.globalBucket.main = {recursivePlay};

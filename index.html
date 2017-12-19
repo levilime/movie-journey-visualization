@@ -7,6 +7,7 @@
 <script type="text/javascript" src="src/timeline.js"></script>
 <script type="text/javascript" src="src/utils.js"></script>
 <script type="text/javascript" src="src/play.js"></script>
+<script type="text/javascript" src="src/dialog.js"></script>
 <script type="text/javascript" src="src/main.js"></script>
  <script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -29,6 +30,7 @@
   <title>Movie script visualisation</title>
   <link rel="stylesheet" type="text/css" href="main.css">
   <link rel="stylesheet" type="text/css" href="svg.css">
+  <link rel="stylesheet" type="text/css" href="dialog.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -36,6 +38,8 @@
 
 
  <body>
+
+  <div>
  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
   <a class="navbar-brand" href="#">Movie Script Visualisation</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,13 +65,13 @@
      <a class="nav-link" onclick="alert('Movie Script visualisation by: Levi van Aanholt, Hao Ming Yeh and Valentin Gerald');">Info <span class="sr-only">(current)</span></a>
     </li>
    </ul>
-   <!--<form class="form-inline my-2 my-lg-0">-->
-    <!--<input class="form-control mr-sm-2" placeholder="Search" aria-label="Search" type="text">-->
-    <!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
-   <!--</form>-->
-   <a id="movieheader" class="navbar-brand">Movie Script Visualisation</a>
+  </div>
+  <a id="movieheader" class="navbar-brand">Movie Script Visualisation</a>
+  <div id="utils">
+    <input type="button" id="bDialog" onclick="dialog.dialogLayout()" value="Hide dialogs"></input>
   </div>
  </nav>
+</div>
 
 
  <div id="characters" class="card">
@@ -79,6 +83,12 @@
   </div>
  </div>
   <div id="container"></div>
+  <div id="dialogPannel" class="hidden">
+
+    <div id ="dialog">
+    </div>  
+      
+  </div>
   <div id="bottom">
    <div class="play">
     <i id="play" class="fa fa-play fa-4x" aria-hidden="true"></i>
