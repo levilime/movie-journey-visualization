@@ -2,7 +2,7 @@
     // because this is meant to be a proof of concept, a global bucket is used to let the different scripts communicate
     window['globalBucket'] = {};
 </script>
-
+<script type="text/javascript" src="src/characters.js"></script>
 <script type="text/javascript" src="src/overview.js"></script>
 <script type="text/javascript" src="src/timeline.js"></script>
 <script type="text/javascript" src="src/utils.js"></script>
@@ -12,6 +12,7 @@
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/d3-force-cluster@latest"></script>
 
 <!-- load the scripts -->
 <script type="text/javascript" src="scripts/earl.js"></script>
@@ -69,7 +70,14 @@
  </nav>
 
 
-
+ <div id="characters" class="card">
+ <div class="card-header">
+  <a data-toggle="collapse" href="#collapse-charlist">List of Characters</a>
+ </div>
+  <div class="card-block collapse" id="collapse-charlist">
+   <ul></ul>
+  </div>
+ </div>
   <div id="container"></div>
   <div id="bottom">
    <div class="play">

@@ -4,7 +4,7 @@ window.globalBucket.script.inception = {
         "name": "INT. ELEGANT DINING ROOM, JAPANESE CASTLE - LATER",
         "location": "INT. ELEGANT DINING ROOM, JAPANESE CASTLE",
         "characters": ["ATTENDANT", "SECURITY GUARD", "ELDERLY JAPANESE MAN"],
-        "startTime": 0.31727300036363637,
+        "startTime": 0,
         "script": [{
             "character": ["ATTENDANT"],
             "dialog": "He was delirious. But he asked for you by name. And... Show him.",

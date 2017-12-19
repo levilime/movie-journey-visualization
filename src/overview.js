@@ -150,7 +150,8 @@ const updateAreas= (areaData, links, graphoption) => {
                     return "M" + [x1, y1 + "A" + d, d + " 0 0,1 " + x1, y2].join(', ');
                 }
 
-            })
+            });
+    // characters.updateClusters();
     });
 
     simulation.restart();

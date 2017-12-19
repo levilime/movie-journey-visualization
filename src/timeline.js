@@ -46,7 +46,7 @@ const timeline = (() => {
             const svgxpos = svgtimeline.getBoundingClientRect().x;
             const clickontimeline = e.clientX - svgxpos;
             const progress = clickontimeline / timelineUtilcalculateTimelineWidth();
-            window.globalBucket.time =  progress * window.globalBucket.amountofPages;
+            window.globalBucket.time =  Math.max(progress * window.globalBucket.amountofPages, 0);
             if (!play.playStatus) recursivePlay()
         })
     };
