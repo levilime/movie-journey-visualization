@@ -64,7 +64,11 @@ const characters = (() => {
             .attr('cy', 0)
             .attr('r', 20)
             .attr('fill', () => utils.randomColor())
-            .attr('z-index', 2);
+            .attr('z-index', 2)
+            //added id to circle (name)
+            .attr("id", function(d){
+                return d.name; 
+            });
 
         charGroups.append('text')
             .text((d) => d.name)

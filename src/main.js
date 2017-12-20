@@ -29,7 +29,8 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.currentSceneIndex = 0;
     window.globalBucket.time = 0;
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
-    changeMovieHeader(data.name);
+    //+location
+    changeMovieHeader(data.name+' - '+data.scenes[window.globalBucket.currentSceneIndex].location);
     characters.initCharacters(data);
     prepareCharacterList();
     //load the first scene dialog
@@ -70,6 +71,8 @@ const prepareCharacterList = () => {
         return inputArray.indexOf(char) == index;
     });
     chars.forEach((char) => {
+        //added color of the circle to the list of character -> doesn't work because not every character's circle is loaded at the beginning -> solution: fix color for character at the beginning
+        //color=document.getElementById(char).getAttribute("fill");
         list.insertAdjacentHTML('beforeend', '<li>' + char + '</li>')
     });
 };
@@ -114,10 +117,10 @@ const init = () => {
 
     // draw the timeline
     // timeline.updateTimeline(window.globalBucket.data);
-    prepareCharacterList();
+    
 
     window.globalBucket.newData(data);
-
+    prepareCharacterList();
     timeline.updateTimelineProgress(0);
     timeline.clickTimeline();
     play.init();
@@ -129,6 +132,8 @@ const recursivePlay = () => {
         window.globalBucket.time += incrementalStep;
         const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
         if(dialog.dialogActive){dialog.loadDialogs(currentScene);}
+        //+location
+        changeMovieHeader(window.globalBucket.data.name+' - '+window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex].location);
         if (window.globalBucket.time >= currentScene.endTime || window.globalBucket.time < currentScene.startTime) {
             window.globalBucket.currentSceneIndex = window.globalBucket.data.scenes.findIndex((scene) => scene.startTime <= window.globalBucket.time &&
                 scene.endTime > window.globalBucket.time);
