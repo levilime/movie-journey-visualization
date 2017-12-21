@@ -18,6 +18,8 @@ const timeStep = 10;
 const pagesPerSecond = 1;
 const incrementalStep = pagesPerSecond * (timeStep/1000);
 
+window.globalBucket.transitionDuration = 2000;
+
 window.globalBucket.newDataFromkey = (key) => {
     window.globalBucket.newData(window.globalBucket.script[key])
 };

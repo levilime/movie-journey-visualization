@@ -13,7 +13,9 @@ const updateColors = (data) => {
     const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
     const visitedNodes = breadthFirstSearch(currentScene.location, links);
 
-    svg.selectAll('.areaData').selectAll('rect').attr('fill', (d) => colormapping(d, visitedNodes));
+    svg.selectAll('.areaData').selectAll('rect')
+        .transition().duration(window.globalBucket.transitionDuration)
+        .attr('fill', (d) => colormapping(d, visitedNodes));
 }
 
 const breadthFirstSearch = (startLocation, links) => {
@@ -114,7 +116,6 @@ const updateAreas= (areaData, links, graphoption) => {
 	const drawnAreas = areaContainer.append('rect')
 		.attr('width', 100)
 		.attr('height', 100)
-		// .attr('fill', (d) => colormapping(d))
         .attr('stroke', 'black')
 		.attr('stroke-width', 2)
 		.attr('rx', '20')
