@@ -29,7 +29,6 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.currentSceneIndex = 0;
     window.globalBucket.time = 0;
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
-    //+location
     changeMovieHeader(data.name);
     characters.initCharacters(data);
     prepareCharacterList();
