@@ -29,6 +29,8 @@ const updateAreas= (areaData, links, graphoption) => {
     svg.selectAll('.areaLine')
         .remove();
 
+    svg.selectAll('marker').remove();
+
 	const areas = svg.selectAll('.areaData')
 		.data(areaDataList, (d) => d);
 

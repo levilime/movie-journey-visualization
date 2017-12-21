@@ -55,8 +55,13 @@ const prepareMovieDropdown = () => {
 const prepareGraphOptionsDropdown = () => {
     const dropdown = document.getElementById('graphoptionsdropdown');
     Object.keys(overview.forceGraphRepresentations).map(k => {
-        dropdown.insertAdjacentHTML('beforeend', '<a class="dropdown-item" onclick="overview.updateOverview(window.globalBucket.data, '+"'"+k+"'"+')">' + k + '</a>');
+        dropdown.insertAdjacentHTML('beforeend', '<a class="dropdown-item" onclick="graphReordering('+"'"+k+"'"+')">' + k + '</a>');
     })
+};
+
+const graphReordering = (key) => {
+    overview.updateOverview(window.globalBucket.data, key);
+    characters.initCharacters(window.globalBucket.data);
 };
 
 const prepareCharacterList = () => {

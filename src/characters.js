@@ -1,6 +1,8 @@
 const characters = (() => {
 
     const initCharacters = (data) => {
+        // redraw the character g bucket to make it look on top
+        window.globalBucket.mainSVGG.selectAll('.charData').remove();
         initClusters();
         updateChars(data);
         stopFollowingChar();
