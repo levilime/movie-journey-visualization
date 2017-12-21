@@ -75,6 +75,8 @@ const prepareCharacterList = () => {
         return inputArray.indexOf(char) == index;
     });
     chars.forEach((char) => {
+        //added color of the circle to the list of character -> doesn't work because not every character's circle is loaded at the beginning -> solution: fix color for character at the beginning
+        //color=document.getElementById(char).getAttribute("fill");
         list.insertAdjacentHTML('beforeend', '<li>' + char + '</li>')
     });
 };
@@ -120,10 +122,10 @@ const init = () => {
 
     // draw the timeline
     // timeline.updateTimeline(window.globalBucket.data);
-    prepareCharacterList();
+    
 
     window.globalBucket.newData(data);
-
+    prepareCharacterList();
     timeline.updateTimelineProgress(0);
     timeline.clickTimeline();
     play.init();

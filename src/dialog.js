@@ -36,7 +36,10 @@ const loadDialogs = (currentScene) =>  {
     const dBubble2=dBubble.append('div').classed("txt",currentScript=>{if(window.globalBucket.time>currentScript.startTime){return true;}else{return false;}});
 
     index=0;
-    dBubble2.append('p').classed("name", true).classed('alt',currentScript=>{
+    dBubble2.append('p').classed("name", true).style('color',currentScript=>{
+        //color of the character circle
+        return document.getElementById(currentScript.character).getAttribute("fill");
+        }).classed('alt',currentScript=>{
         result=listResult[index];
         index++;
         return result;
