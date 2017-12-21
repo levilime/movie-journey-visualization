@@ -99,6 +99,7 @@ const init = () => {
             const zoomFactor = Number(window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform").split(' ')
                 .filter(x => x.startsWith('scale'))[0].substr(6).slice(0, -1));
             overview.zooming(zoomFactor);
+            characters.zooming(zoomFactor);
 
         }));
     setInterval(() => {characters.updateClusters();}, 25);

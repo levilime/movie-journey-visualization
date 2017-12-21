@@ -70,6 +70,7 @@ const characters = (() => {
 
         charGroups.append('text')
             .text((d) => d.name)
+            .classed('characterName', true)
             .attr('font-size', 14)
             .attr('x', 0)
             .attr('y', 10);
@@ -172,6 +173,17 @@ const characters = (() => {
         .attr('vy', (d) => d.y);
     };
 
-return { initCharacters, updateCharacters, initClusters, updateClusters};
+    const zooming = (zoomFactor) => {
+        if(zoomFactor < 0.5) {
+            window.globalBucket.mainSVG.selectAll('.characterName').attr('opacity', 0);
+        } else {
+            window.globalBucket.mainSVG.selectAll('.characterName').attr('opacity', 1);
+        }
+        window.globalBucket.mainSVG.selectAll('.characterName')
+            .attr('font-size', 14 * (1/zoomFactor))
+            .attr('y', 10 + 10 * (1/zoomFactor));
+    };
+
+return { initCharacters, updateCharacters, initClusters, updateClusters, zooming};
 })();
 

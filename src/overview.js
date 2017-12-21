@@ -167,7 +167,6 @@ const pointOnCircle = (cx, cy, px, py, radius) => {
 };
 
 const zooming = (zoomFactor) => {
-
     if(zoomFactor < 0.5) {
         window.globalBucket.mainSVG.selectAll('.areaText').attr('opacity', 0);
     } else {
