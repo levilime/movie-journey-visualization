@@ -976,8 +976,8 @@ window.globalBucket.script.inception = {
         }, {"character": ["COBB"], "dialog": "We're going to need a new architect.", "startTime": 23.786969782181817}],
         "endTime": 23.802121291272726
     }, {
-        "name": "INT. GREAT HALL, ÉCOLE D'ARCHITECTURE - MORNING",
-        "location": "INT. GREAT HALL, ÉCOLE D'ARCHITECTURE",
+        "name": "INT. GREAT HALL, \u00C9COLE D'ARCHITECTURE - MORNING",
+        "location": "INT. GREAT HALL, \u00C9COLE D'ARCHITECTURE",
         "characters": ["COBB"],
         "startTime": 23.802121291272726,
         "script": [],
@@ -1153,8 +1153,8 @@ window.globalBucket.script.inception = {
         }, {"character": ["COBB"], "dialog": "Not exactly.", "startTime": 27.741515254909093}],
         "endTime": 27.741515254909093
     }, {
-        "name": "EXT. ROOFTOP, ÉCOLE D'ARCHITECTURE - MOMENTS LATER",
-        "location": "EXT. ROOFTOP, ÉCOLE D'ARCHITECTURE",
+        "name": "EXT. ROOFTOP, \u00C9COLE D'ARCHITECTURE - MOMENTS LATER",
+        "location": "EXT. ROOFTOP, \u00C9COLE D'ARCHITECTURE",
         "characters": ["COBB", "ARIADNE", "MILES"],
         "startTime": 27.741515254909093,
         "script": [{
@@ -2190,13 +2190,6 @@ window.globalBucket.script.inception = {
         "location": "INT. BACK ROOM, WORKSHOP",
         "characters": ["ARIADNE"],
         "startTime": 53.180909418545454,
-        "script": [],
-        "endTime": 53.27181847309091
-    }, {
-        "name": "the TIPPING POINT again. A NOISE makes her look up.",
-        "location": "the TIPPING POINT again. A NOISE makes her look up.",
-        "characters": [],
-        "startTime": 53.27181847309091,
         "script": [],
         "endTime": 53.286969982181816
     }, {
@@ -3630,7 +3623,7 @@ window.globalBucket.script.inception = {
         "endTime": 87.18090941854545
     }, {
         "name": "INT. MAL'S CHILDHOOD HOME , DAY",
-        "location": "INT. MAL'S CHILDHOOD HOME , DAY",
+        "location": "INT. MAL'S CHILDHOOD HOME",
         "characters": ["COBB", "MAL"],
         "startTime": 87.18090941854545,
         "script": [{
