@@ -49,8 +49,8 @@ const timeline = (() => {
     const metaData = (resize) => {
         const timeline = window.globalBucket.timelineSVGG;
         timeline.selectAll('metaData').attr('x', timelineUtilcalculateTimelineWidth()/4);
-        const newMetaData = ["At page: " + Math.floor(window.globalBucket.time) +"/"+ window.globalBucket.amountofPages
-        +" " + "Scene: "+ window.globalBucket.currentSceneIndex + "/" + window.globalBucket.data.scenes.length
+        const newMetaData = ["At page: " + Math.floor(window.globalBucket.time + 1) +"/"+ window.globalBucket.amountofPages
+        +" " + "Scene: "+ (window.globalBucket.currentSceneIndex + 1) + "/" + window.globalBucket.data.scenes.length
         +" " + "Location: " + window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex].name];
 
         if (newMetaData[0] !== metadata || resize) {

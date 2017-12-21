@@ -13,6 +13,8 @@ const characters = (() => {
     };
 
     let followingCharInterval = null;
+    const charsInView = [];
+    let mouseOverChar = null;
 
     // Update the character groups according to the data
     const updateChars = (data) => {
@@ -24,19 +26,19 @@ const characters = (() => {
         });
 
         // Get the latest position of the seen characters
-        const charsInView = [];
+        // const charsInView = [];
         pastScenes.forEach((scene) => {
             scene.characters.forEach((char) => {
-            let currentChar = charsInView.filter((seenChar) => { return seenChar.name === char; });
+            let currentChar = charsInView.find((seenChar) => { return seenChar.name === char; });
             const location = svg.selectAll('.areaData').filter((d) => {return d.location === scene.location; });
             const transform = location.attr('transform').replace('translate(', '').replace(')', '').split(',');
-            if (currentChar.length > 0) {
-                currentChar[0].location = scene.location;
-                currentChar[0].x = parseFloat(transform[0]);
-                currentChar[0].y = parseFloat(transform[1]);
+            const halfWidth = location.attr('width') ? parseFloat(location.attr('width')) / 2 : 0;
+            const halfHeight = location.attr('height') ? parseFloat(location.attr('height')) / 2 : 0;
+            if (currentChar) {
+                currentChar.location = scene.location;
             } else {
-                charsInView.push({name: char, location: scene.location, x: parseFloat(transform[0]),
-                    y: parseFloat(transform[1]), radius: 20, inTransition: false});
+                charsInView.push({name: char, location: scene.location, x: parseFloat(transform[0]) + halfWidth,
+                    y: parseFloat(transform[1]) + halfHeight, radius: 20, inTransition: false});
             }
             });
         });
@@ -55,10 +57,21 @@ const characters = (() => {
                     followingCharInterval = setInterval(() => {
                         const parent = svg.node().parentElement;
                         const scale = 1.0;
-                        const translate = [parent.clientWidth / 2 - scale * parseFloat(selectedNode.attr('vx')), parent.clientHeight / 2 - scale * parseFloat(selectedNode.attr('vy'))];
+                        overview.zooming(scale);
+                        zooming(scale);
+                        const transform = selectedNode.attr('transform').replace('translate(', '').replace(')', '').split(',');
+                        const translate = [parent.clientWidth / 2 - scale * parseFloat(transform[0]), parent.clientHeight / 2 - scale * parseFloat(transform[1])];
                         svg.transition().duration(followInterval).attr('transform', 'translate('  + translate.join(',') + ') scale(' + scale + ')') ;
                     }, followInterval);
                     d3.event.stopPropagation();
+                }).on('mouseover', (d, i, nodes) => {
+                    const charName = d3.select(nodes[i]).select('.characterName');
+                    mouseOverChar = charName.attr('opacity');
+                    charName.attr('opacity', 1);
+                }).on('mouseout', (d, i, nodes) => {
+                    const charName = d3.select(nodes[i]).select('.characterName');
+                    charName.attr('opacity', mouseOverChar);
+                    mouseOverChar = null;
                 });
 
         charGroups.append('circle')
@@ -90,7 +103,13 @@ const characters = (() => {
         }).attr('vx', (d) => d.x)
         .attr('vy', (d) => d.y)
         .each((d) => d.inTransition = true)
-        .on('end', (d) => d.inTransition = false);
+        .on('end', (d, i, nodes) => {
+            d.inTransition = false;
+            const currentNode = d3.select(nodes[i]);
+            const transform = currentNode.attr('transform').replace('translate(', '').replace(')', '').split(',');
+            d.x = parseFloat(transform[0]);
+            d.y = parseFloat(transform[1]);
+        });
 
         svg.selectAll('.charData').attr('data-currentVal', (d) => d.location);
 
@@ -158,7 +177,7 @@ const characters = (() => {
         const simulation = d3.forceSimulation()
             .force('cluster', d3.forceCluster().centers((item) => {
                     return clusters.find((cluster) => cluster.name === item.location);}).strength(0.5))
-            .force('collide', d3.forceCollide((d) => { return 15; }))
+            .force('collide', d3.forceCollide((d) => { return 20; }))
             .on('tick', tickClusters).nodes(svg.selectAll('.charData').data());
         characters.simulation = simulation;
     };
@@ -171,7 +190,7 @@ const characters = (() => {
             const currentCluster = clusters.find((cluster) => cluster.name === d.location);
             d.x = Math.max(currentCluster.x - currentCluster.width, Math.min(currentCluster.x + currentCluster.width, d.x));
             d.y = Math.max(currentCluster.y - currentCluster.height, Math.min(currentCluster.y + currentCluster.height, d.y));
-            return "translate( " +[d.x, d.y].join(',') + ")"
+            return "translate( " +[d.x, d.y].join(',') + ")";
         }).attr('vx', (d) => d.x)
         .attr('vy', (d) => d.y);
     };
