@@ -10,7 +10,38 @@ const updateOverview =  (data, graphoption) => {
 const updateColors = (data) => {
     const links = createLinks(data);
     const svg = window.globalBucket.mainSVGG;
-    svg.selectAll('.areaData').selectAll('rect').attr('fill', (d) => colormapping(d, links));
+    const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
+    const visitedNodes = breadthFirstSearch(currentScene.location, links);
+
+    svg.selectAll('.areaData').selectAll('rect').attr('fill', (d) => colormapping(d, visitedNodes));
+}
+
+const breadthFirstSearch = (startLocation, links) => {
+    let queue = [startLocation];
+    let nextLevel = [];
+    const visitedNodes = [];
+    let levelNodes = 0;
+
+    while(queue.length > 0 || nextLevel.length > 0) {
+        if (queue.length === 0) {
+            queue = nextLevel;
+            nextLevel = [];
+            levelNodes++;
+        }
+        const currentNode = queue.pop();
+        visitedNodes.push({location: currentNode, level: levelNodes});
+
+        links.forEach((x) => {
+            if (x.source === currentNode && !visitedNodes.find((q) => x.target === q.location) && !nextLevel.find((q) => x.target === q))
+            {
+                nextLevel.push(x.target);
+            }
+            else if (x.target === currentNode && !visitedNodes.find((q) => x.source === q.location) && !nextLevel.find((q) => x.source === q)) {
+                nextLevel.push(x.source);
+            }
+        });
+    }
+    return visitedNodes;
 }
 
 const getCenter = ()    => {
@@ -165,17 +196,13 @@ const updateAreas= (areaData, links, graphoption) => {
     simulation.restart();
 };
 
-const colormapping = (d, links) => {
-    const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
-    if (d.location === currentScene.location) {
-        return utils.areaColor(2);
+const colormapping = (d, visitedNodes) => {
+    // const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
+    const nodeLevel = visitedNodes.find((node) => d.location === node.location).level;
+    if (nodeLevel > 7) {
+        return utils.areaColor[0];
     }
-    const connected = links.filter((link) => {return (link.source === currentScene.location && link.target === d.location)
-|| (link.source === d.location && link.target === currentScene.location);});
-    if (connected.length > 0) {
-        return utils.areaColor(1);
-    }
-    return utils.areaColor(0);
+    return utils.areaColor[utils.areaColor.length - nodeLevel - 1];
 }
 
 const pointOnCircle = (cx, cy, px, py, radius) => {
@@ -200,6 +227,7 @@ const zooming = (zoomFactor) => {
 const forceFalloff = (amount) => Math.pow(amount, 0.8);
 
 const changeForceGraph = (key) => {
+    updateColors(window.globalBucket.data);
     if(key in forceGraphRepresentations){
         return forceGraphRepresentations[key]();
     }
