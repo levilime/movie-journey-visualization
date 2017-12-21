@@ -27,3 +27,9 @@
 #characters .card-block{
     overflow-y: scroll;
 }
+
+.play i::before{
+    margin-left:10px;
+    bottom:5px;
+    position: fixed;
+} 
