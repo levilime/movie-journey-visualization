@@ -1,8 +1,11 @@
 const characters = (() => {
 
+    let charsInView = [];
+
     const initCharacters = (data) => {
         // redraw the character g bucket to make it look on top
         window.globalBucket.mainSVGG.selectAll('.charData').remove();
+        charsInView = [];
         initClusters();
         updateChars(data);
         stopFollowingChar();
@@ -13,7 +16,6 @@ const characters = (() => {
     };
 
     let followingCharInterval = null;
-    const charsInView = [];
     let mouseOverChar = null;
 
     // Update the character groups according to the data
@@ -165,7 +167,7 @@ const characters = (() => {
 
         characters.simulation.force('cluster', d3.forceCluster().centers((item) => {
                 return clusters.find((cluster) => cluster.name === item.location);}).strength(0.5))
-            .nodes(svg.selectAll('.charData').data()).alpha(0.5)
+            .nodes(charsInView).alpha(0.5)
             .on('tick', tickClusters).restart();
     };
 
@@ -178,7 +180,7 @@ const characters = (() => {
             .force('cluster', d3.forceCluster().centers((item) => {
                     return clusters.find((cluster) => cluster.name === item.location);}).strength(0.5))
             .force('collide', d3.forceCollide((d) => { return 20; }))
-            .on('tick', tickClusters).nodes(svg.selectAll('.charData').data());
+            .on('tick', tickClusters).nodes(charsInView);
         characters.simulation = simulation;
     };
 
