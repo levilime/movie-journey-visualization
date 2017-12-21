@@ -2,6 +2,6 @@
 const utils = {randomColor: () => {
     const randomNumber = () => Math.floor(Math.random() * 255);
     return "rgb(" + [randomNumber(), randomNumber(), randomNumber()].join(',') + ")";
-}, areaColor: ['#ece7f2','#d0d1e6','#a6bddb','#74a9cf','#3690c0','#0570b0','#045a8d','#023858']
+}, areaColor: ['#fff7bc','#fee391','#fec44f','#fe9929','#ec7014','#cc4c02','#993404','#662506']
     //http://colorbrewer2.org/#type=sequential&scheme=PuBu&n=9
 }

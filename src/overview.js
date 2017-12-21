@@ -199,7 +199,7 @@ const updateAreas= (areaData, links, graphoption) => {
 const colormapping = (d, visitedNodes) => {
     // const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
     const nodeLevel = visitedNodes.find((node) => d.location === node.location).level;
-    if (nodeLevel > 7) {
+    if (nodeLevel > utils.areaColor.length - 1) {
         return utils.areaColor[0];
     }
     return utils.areaColor[utils.areaColor.length - nodeLevel - 1];
