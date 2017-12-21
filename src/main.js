@@ -3,6 +3,7 @@ window.globalBucket.script = {}; // bucket for the scripts
 // put here the logic that should happen when the scene changes
 window.globalBucket.activeSceneChange = (scene) => {
     characters.updateCharacters(window.globalBucket.data);
+    overview.updateColors(window.globalBucket.data);
 };
 // whether the scene is currently playing
 window.globalBucket.playStatus = false;
@@ -17,6 +18,8 @@ const timeStep = 10;
 const pagesPerSecond = 1;
 const incrementalStep = pagesPerSecond * (timeStep/1000);
 
+window.globalBucket.transitionDuration = 2000;
+
 window.globalBucket.newDataFromkey = (key) => {
     window.globalBucket.newData(window.globalBucket.script[key])
 };
@@ -27,6 +30,7 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.amountofPages = data.scenes[data.scenes.length - 1].endTime - data.scenes[0].startTime;
     window.globalBucket.startTime = data.scenes[0].startTime;
     overview.updateOverview(data);
+    overview.updateColors(data);
     timeline.updateTimeline(window.globalBucket.data);
     window.globalBucket.currentSceneIndex = 0;
     window.globalBucket.time = 0;

@@ -84,8 +84,7 @@ const characters = (() => {
             const node = d3.select(nodes[i]);
             return node.attr('data-currentVal') && node.attr('data-currentVal') !== char.location;
         });
-        const transitionDuration = 2000;
-        transitionElements.transition().duration(transitionDuration).attr('transform', (char) => {
+        transitionElements.transition().duration(window.globalBucket.transitionDuration).attr('transform', (char) => {
             const currentCluster = clusters.find((cluster) => cluster.name === char.location);
             return 'translate( ' + currentCluster.x + ',' + currentCluster.y + ')';
         }).attr('vx', (d) => d.x)
@@ -95,7 +94,7 @@ const characters = (() => {
 
         svg.selectAll('.charData').attr('data-currentVal', (d) => d.location);
 
-        playTransitionDelay(transitionElements, transitionDuration);
+        playTransitionDelay(transitionElements, window.globalBucket.transitionDuration);
 
     };
 

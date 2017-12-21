@@ -7,6 +7,45 @@ const updateOverview =  (data, graphoption) => {
 	updateAreas(areas, links, graphoption);
 };
 
+const updateColors = (data) => {
+    const links = createLinks(data);
+    const svg = window.globalBucket.mainSVGG;
+    const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
+    const visitedNodes = breadthFirstSearch(currentScene.location, links);
+
+    svg.selectAll('.areaData').selectAll('rect')
+        .transition().duration(window.globalBucket.transitionDuration)
+        .attr('fill', (d) => colormapping(d, visitedNodes));
+}
+
+const breadthFirstSearch = (startLocation, links) => {
+    let queue = [startLocation];
+    let nextLevel = [];
+    const visitedNodes = [];
+    let levelNodes = 0;
+
+    while(queue.length > 0 || nextLevel.length > 0) {
+        if (queue.length === 0) {
+            queue = nextLevel;
+            nextLevel = [];
+            levelNodes++;
+        }
+        const currentNode = queue.pop();
+        visitedNodes.push({location: currentNode, level: levelNodes});
+
+        links.forEach((x) => {
+            if (x.source === currentNode && !visitedNodes.find((q) => x.target === q.location) && !nextLevel.find((q) => x.target === q))
+            {
+                nextLevel.push(x.target);
+            }
+            else if (x.target === currentNode && !visitedNodes.find((q) => x.source === q.location) && !nextLevel.find((q) => x.source === q)) {
+                nextLevel.push(x.source);
+            }
+        });
+    }
+    return visitedNodes;
+}
+
 const getCenter = ()    => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
     const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
@@ -77,8 +116,7 @@ const updateAreas= (areaData, links, graphoption) => {
 	const drawnAreas = areaContainer.append('rect')
 		.attr('width', 100)
 		.attr('height', 100)
-		.attr('fill', () => utils.randomColor())
-		.attr('stroke', 'black')
+        .attr('stroke', 'black')
 		.attr('stroke-width', 2)
 		.attr('rx', '20')
         .attr('ry', '20')
@@ -159,6 +197,15 @@ const updateAreas= (areaData, links, graphoption) => {
     simulation.restart();
 };
 
+const colormapping = (d, visitedNodes) => {
+    // const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
+    const nodeLevel = visitedNodes.find((node) => d.location === node.location).level;
+    if (nodeLevel > utils.areaColor.length - 1) {
+        return utils.areaColor[0];
+    }
+    return utils.areaColor[utils.areaColor.length - nodeLevel - 1];
+}
+
 const pointOnCircle = (cx, cy, px, py, radius) => {
     const vx = px- cx;
     const vy = py - cy;
@@ -181,6 +228,7 @@ const zooming = (zoomFactor) => {
 const forceFalloff = (amount) => Math.pow(amount, 0.8);
 
 const changeForceGraph = (key) => {
+    updateColors(window.globalBucket.data);
     if(key in forceGraphRepresentations){
         return forceGraphRepresentations[key]();
     }
@@ -217,6 +265,7 @@ const forceChronoCluster = () => {
             }
         }));
 };
+
     const forceGraphRepresentations = {
         "Centered": forceCenter,
         "Chronologically clustered": forceChronoCluster
@@ -261,5 +310,5 @@ const getSceneData= (data) => {
 	return areas;
 };
 
-return {updateOverview, updateAreas, changeSimulationCenter, zooming, forceGraphRepresentations, changeForceGraph};
+return {updateOverview, updateAreas, updateColors, changeSimulationCenter, zooming, forceGraphRepresentations, changeForceGraph};
 })();
