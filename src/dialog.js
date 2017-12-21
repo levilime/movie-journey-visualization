@@ -2,6 +2,8 @@ const dialog = (() => {
 let dialogActive = true;
 
 const loadDialogs = (currentScene) =>  {
+    if (!currentScene) {return;}
+
     var lastCh="";
     var altBool=0;
     var result=false;
@@ -38,6 +40,7 @@ const loadDialogs = (currentScene) =>  {
     index=0;
     dBubble2.append('p').classed("name", true).style('color',currentScript=>{
         //color of the character circle
+        if (!document.getElementById(currentScript.character)) {return 'white';}
         return document.getElementById(currentScript.character).getAttribute("fill");
         }).classed('alt',currentScript=>{
         result=listResult[index];
