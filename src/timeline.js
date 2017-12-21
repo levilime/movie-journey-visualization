@@ -1,4 +1,5 @@
 const timeline = (() => {
+   var metadata = "";
    const updateTimeline =  (data) => {
         const width = timelineUtilcalculateTimelineWidth();
         const timeline = window.globalBucket.timelineSVGG;
@@ -26,7 +27,7 @@ const timeline = (() => {
             .attr('height', 50)
             .attr('stroke', 'black')
             .attr('fill', () => utils.randomColor())
-            .attr('stroke-width', 2)
+            .attr('stroke-width', 0.5)
             .attr('z-index', 1);
 
 
@@ -45,9 +46,33 @@ const timeline = (() => {
             if (!play.playStatus) recursivePlay()
         })
     };
+    const metaData = (resize) => {
+        const timeline = window.globalBucket.timelineSVGG;
+        timeline.selectAll('metaData').attr('x', timelineUtilcalculateTimelineWidth()/4);
+        const newMetaData = ["At page: " + Math.floor(window.globalBucket.time) +"/"+ window.globalBucket.amountofPages
+        +" " + "Scene: "+ window.globalBucket.currentSceneIndex + "/" + window.globalBucket.data.scenes.length
+        +" " + "Location: " + window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex].name];
+
+        if (newMetaData[0] !== metadata || resize) {
+            metadata = newMetaData[0];
+            timeline.selectAll('.metatext').remove();
+            const metaText = timeline.selectAll('metaData').data(newMetaData).enter().append('text')
+                .classed('metatext', true)
+                .attr('font-size', 14)
+                .attr('x', timelineUtilcalculateTimelineWidth()/4)
+                .attr('y', 70);
+
+            metaText.text(d => {
+                return d;
+            });
+        }
+    };
+
     const updateTimelineProgress =  (progress) => {
         const data = [{progress}];
         const timeline = window.globalBucket.timelineSVGG;
+
+        metaData();
         timeline.selectAll(".progress").remove();
         const progressInit = timeline.selectAll('.progress')
             .data(data, d => d)
@@ -63,7 +88,6 @@ const timeline = (() => {
                 return "translate( " + [timelineUtilcalculateTimelineWidth()
                     * data.progress, 0].join(',') + ")"
             });
-
         progressContainer.append('line')
             .attr('stroke-width', 3)
             .attr('stroke', 'red')
@@ -71,8 +95,10 @@ const timeline = (() => {
             .attr('y1', link => 0)
             .attr('x2', link => 0)
             .attr('y2', link => 70);
+
+
     };
     const timelineUtilcalculateTimelineWidth = () => parseInt(window.globalBucket.timelineSVG.style("width").replace("px", ""));
-    return {updateTimeline, updateTimelineProgress, clickTimeline};
+    return {updateTimeline, updateTimelineProgress, clickTimeline, metaData};
 })();
 

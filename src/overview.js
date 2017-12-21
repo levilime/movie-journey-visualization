@@ -267,7 +267,7 @@ const forceChronoCluster = () => {
 
     const forceGraphRepresentations = {
         "Centered": forceCenter,
-        "Chronologically clustestered": forceChronoCluster
+        "Chronologically clustered": forceChronoCluster
     };
 
     const changeSimulationCenter= () => {
