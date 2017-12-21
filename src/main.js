@@ -3,6 +3,7 @@ window.globalBucket.script = {}; // bucket for the scripts
 // put here the logic that should happen when the scene changes
 window.globalBucket.activeSceneChange = (scene) => {
     characters.updateCharacters(window.globalBucket.data);
+    overview.updateColors(window.globalBucket.data);
 };
 // whether the scene is currently playing
 window.globalBucket.playStatus = false;
@@ -25,6 +26,7 @@ window.globalBucket.newDataFromkey = (key) => {
 window.globalBucket.newData = (data) => {
     window.globalBucket.data = data;
     overview.updateOverview(data);
+    overview.updateColors(data);
     timeline.updateTimeline(window.globalBucket.data);
     window.globalBucket.currentSceneIndex = 0;
     window.globalBucket.time = 0;
