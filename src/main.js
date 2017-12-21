@@ -57,8 +57,13 @@ const prepareMovieDropdown = () => {
 const prepareGraphOptionsDropdown = () => {
     const dropdown = document.getElementById('graphoptionsdropdown');
     Object.keys(overview.forceGraphRepresentations).map(k => {
-        dropdown.insertAdjacentHTML('beforeend', '<a class="dropdown-item" onclick="overview.updateOverview(window.globalBucket.data, '+"'"+k+"'"+')">' + k + '</a>');
+        dropdown.insertAdjacentHTML('beforeend', '<a class="dropdown-item" onclick="graphReordering('+"'"+k+"'"+')">' + k + '</a>');
     })
+};
+
+const graphReordering = (key) => {
+    overview.updateOverview(window.globalBucket.data, key);
+    characters.initCharacters(window.globalBucket.data);
 };
 
 const prepareCharacterList = () => {
@@ -96,6 +101,7 @@ const init = () => {
             const zoomFactor = Number(window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform").split(' ')
                 .filter(x => x.startsWith('scale'))[0].substr(6).slice(0, -1));
             overview.zooming(zoomFactor);
+            characters.zooming(zoomFactor);
 
         }));
     setInterval(() => {characters.updateClusters();}, 25);

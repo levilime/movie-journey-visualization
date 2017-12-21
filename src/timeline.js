@@ -29,11 +29,6 @@ const timeline = (() => {
             .attr('stroke-width', 2)
             .attr('z-index', 1);
 
-        sceneContainer.append('text')
-            .text(node => node.name)
-            .attr('font-size', 14)
-            .attr('x', 0)
-            .attr('y', 70);
 
         drawnTimelineScenes
             .append('title').text((d) => {

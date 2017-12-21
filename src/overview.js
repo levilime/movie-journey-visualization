@@ -35,6 +35,8 @@ const updateAreas= (areaData, links, graphoption) => {
     svg.selectAll('.areaLine')
         .remove();
 
+    svg.selectAll('marker').remove();
+
 	const areas = svg.selectAll('.areaData')
 		.data(areaDataList, (d) => d);
 
@@ -184,6 +186,12 @@ const pointOnCircle = (cx, cy, px, py, radius) => {
 };
 
 const zooming = (zoomFactor) => {
+    if(zoomFactor < 0.5) {
+        window.globalBucket.mainSVG.selectAll('.areaText').attr('opacity', 0);
+    } else {
+        window.globalBucket.mainSVG.selectAll('.areaText').attr('opacity', 1);
+    }
+
     window.globalBucket.mainSVG.selectAll('.areaText')
         .attr('font-size', 14 * (1/zoomFactor))
         .attr('y', 110 + 10 * (1/zoomFactor));
