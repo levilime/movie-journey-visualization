@@ -24,6 +24,8 @@ window.globalBucket.newDataFromkey = (key) => {
 // put here the logic when new script data is loaded in
 window.globalBucket.newData = (data) => {
     window.globalBucket.data = data;
+    window.globalBucket.amountofPages = data.scenes[data.scenes.length - 1].endTime - data.scenes[0].startTime;
+    window.globalBucket.startTime = data.scenes[0].startTime;
     overview.updateOverview(data);
     timeline.updateTimeline(window.globalBucket.data);
     window.globalBucket.currentSceneIndex = 0;
@@ -114,6 +116,7 @@ const init = () => {
         .classed('timelineSVG', true);
     window.globalBucket.timelineSVGG = window.globalBucket.timelineSVG.append('g');
 
+
     window.globalBucket.data = window.globalBucket.script[Object.keys(window.globalBucket.script)[0]];
 
     const data = window.globalBucket.data;
@@ -162,6 +165,7 @@ window.addEventListener("resize", (e) => {
     // timeline progress pointer also has to be updated because it has to draw over the scene elements
     timeline.updateTimelineProgress(window.globalBucket.time / window.globalBucket.amountofPages);
     overview.changeSimulationCenter();
+    timeline.metaData(true);
 });
 
 window.globalBucket.main = {recursivePlay};
