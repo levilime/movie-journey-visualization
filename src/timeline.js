@@ -19,7 +19,7 @@ const timeline = (() => {
             .attr('transform', (node, i) => {
                 const previousLastKnownPosition = lastKnownPosition;
                 lastKnownPosition = lastKnownPosition + width * scenePercentages[i];
-                return "translate( " + [previousLastKnownPosition, 0].join(',') + ")"
+                return "translate( " + [previousLastKnownPosition, 0].join(',') + ")";
             });
 
         const drawnTimelineScenes = sceneContainer.append('rect')
@@ -61,9 +61,11 @@ const timeline = (() => {
     const metaData = (resize) => {
         const timeline = window.globalBucket.timelineSVGG;
         timeline.selectAll('metaData').attr('x', timelineUtilcalculateTimelineWidth()/4);
-        const newMetaData = ["At page: " + Math.floor(window.globalBucket.time + 1) +"/"+ Math.ceil(window.globalBucket.amountofPages)
-        +" " + "Scene: "+ (window.globalBucket.currentSceneIndex + 1) + "/" + window.globalBucket.data.scenes.length
-        +" " + "Location: " + window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex].name];
+        const newMetaData = ["At page: " + Math.floor(window.globalBucket.time) +"/"+ window.globalBucket.amountofPages
+        +", " + "Scene: "+ window.globalBucket.currentSceneIndex + "/" + window.globalBucket.data.scenes.length
+        +", " + "Locations: " + window.globalBucket.areaAmount
+        +", " + "Location: " + window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex].name];
+
 
         if (newMetaData[0] !== metadata || resize) {
             metadata = newMetaData[0];
