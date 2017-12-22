@@ -41,6 +41,7 @@ const timeline = (() => {
 
         const timeline = window.globalBucket.timelineSVGG;
         timeline.selectAll('.timelinescenes').selectAll('rect')
+            .transition().duration(window.globalBucket.transitionDuration)
             .attr('fill', (d) => {
                 const area = areas.find((a) => a.location === d.location);
                 return area.color;
