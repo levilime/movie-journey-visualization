@@ -68,11 +68,11 @@ const characters = (() => {
                     followingCharInterval = setInterval(() => {
                         const parent = svg.node().parentElement;
                         const scale = 1.0;
-                        overview.zooming(scale);
-                        characters.zooming(scale);
                         const transform = selectedNode.attr('transform').replace('translate(', '').replace(')', '').split(',');
                         const translate = [parent.clientWidth / 2 - scale * parseFloat(transform[0]), parent.clientHeight / 2 - scale * parseFloat(transform[1])];
                         svg.transition().duration(followInterval).attr('transform', 'translate('  + translate.join(',') + ') scale(' + scale + ')') ;
+                        const activeTransform = d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale);
+                        window.globalBucket.mainSVG.call(window.globalBucket.zoomListener.transform, activeTransform);
                     }, followInterval);
                     d3.event.stopPropagation();
                 });

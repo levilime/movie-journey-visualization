@@ -101,11 +101,11 @@ const goToActiveScene = () => {
 
     const parent = svg.node().parentElement;
     const scale = 1.0;
-    overview.zooming(scale);
-    characters.zooming(scale);
     const transform = activeScene.attr('transform').replace('translate(', '').replace(')', '').split(',');
     const translate = [parent.clientWidth / 2 - scale * parseFloat(transform[0]), parent.clientHeight / 2 - scale * parseFloat(transform[1])];
     svg.transition().attr('transform', 'translate('  + translate.join(',') + ') scale(' + scale + ')') ;
+    const activeTransform = d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale);
+    window.globalBucket.mainSVG.call(window.globalBucket.zoomListener.transform, activeTransform);
 }
 
 
@@ -121,18 +121,19 @@ const init = () => {
         .classed('overviewSVG', true)
         .attr('preserveAspectRatio', 'xMinYMin meet');
     window.globalBucket.mainSVGG = window.globalBucket.mainSVG.append('g');
-    window.globalBucket.mainSVG
-        .call(d3.zoom().on("zoom", function () {
-            // events for zooming
-            window.globalBucket.mainSVGG.attr("transform", d3.event.transform);
-            console.log(d3.event.transform);
-            if (!window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform")) return;
-            const zoomFactor = Number(window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform").split(' ')
+    window.globalBucket.zoomListener = d3.zoom().on("zoom", function () {
+        // events for zooming
+        window.globalBucket.mainSVGG.attr("transform", d3.event.transform);
+        // d3.event.transform
+        if (!window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform")) return;
+        const zoomFactor = Number(window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform").split(' ')
                 .filter(x => x.startsWith('scale'))[0].substr(6).slice(0, -1));
-            overview.zooming(zoomFactor);
-            characters.zooming(zoomFactor);
+        overview.zooming(zoomFactor);
+        characters.zooming(zoomFactor);
+    });
 
-        }));
+    window.globalBucket.mainSVG
+        .call(window.globalBucket.zoomListener);
     setInterval(() => {characters.updateClusters();}, 25);
     // draw the overview
     // overview.updateOverview(window.globalBucket.data);
