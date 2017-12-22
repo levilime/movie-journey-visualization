@@ -73,6 +73,8 @@ const dialogLayout = () => {
     dialogActive = !dialogActive;
 
     if(dialogActive){
+        // reload dialogs when showing it
+        loadDialogs(window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex]);
         b.value = "Hide dialogs";
         // s.style.width="75%";
         s.style('width', "75%");
