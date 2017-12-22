@@ -236,8 +236,8 @@ const changeForceGraph = (key) => {
 
 const forceCenter = () => {
     const center = getCenter();
-    const strength = -100;
-    const forceperScene = 100;
+    const strength = -150;
+    const forceperScene = 150;
     return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
         .force('center', d3.forceCenter(center.x, center.y))
         .force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
