@@ -4,6 +4,11 @@ window.globalBucket.script = {}; // bucket for the scripts
 window.globalBucket.activeSceneChange = (scene) => {
     characters.updateCharacters(window.globalBucket.data);
     overview.updateColors(window.globalBucket.data);
+    timeline.updateTimelineColors();
+
+    if (window.globalBucket.followingActiveScene) {
+        goToActiveScene();
+    }
 };
 // whether the scene is currently playing
 window.globalBucket.playStatus = false;
@@ -87,6 +92,23 @@ const prepareCharacterList = () => {
     });
 };
 
+window.globalBucket.followingActiveScene = false;
+
+const goToActiveScene = () => {
+    const svg = window.globalBucket.mainSVGG;
+    const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
+    const activeScene = svg.selectAll('.areaData').filter((d) => d.location === currentScene.location);
+
+    const parent = svg.node().parentElement;
+    const scale = 1.0;
+    const transform = activeScene.attr('transform').replace('translate(', '').replace(')', '').split(',');
+    const translate = [parent.clientWidth / 2 - scale * parseFloat(transform[0]), parent.clientHeight / 2 - scale * parseFloat(transform[1])];
+    svg.transition().attr('transform', 'translate('  + translate.join(',') + ') scale(' + scale + ')') ;
+    const activeTransform = d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale);
+    window.globalBucket.mainSVG.call(window.globalBucket.zoomListener.transform, activeTransform);
+}
+
+
 // initialization of all main draw elements
 const init = () => {
     prepareMovieDropdown();
@@ -99,17 +121,19 @@ const init = () => {
         .classed('overviewSVG', true)
         .attr('preserveAspectRatio', 'xMinYMin meet');
     window.globalBucket.mainSVGG = window.globalBucket.mainSVG.append('g');
-    window.globalBucket.mainSVG
-        .call(d3.zoom().on("zoom", function () {
-            // events for zooming
-            window.globalBucket.mainSVGG.attr("transform", d3.event.transform);
-            if (!window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform")) return;
-            const zoomFactor = Number(window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform").split(' ')
+    window.globalBucket.zoomListener = d3.zoom().on("zoom", function () {
+        // events for zooming
+        window.globalBucket.mainSVGG.attr("transform", d3.event.transform);
+        // d3.event.transform
+        if (!window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform")) return;
+        const zoomFactor = Number(window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform").split(' ')
                 .filter(x => x.startsWith('scale'))[0].substr(6).slice(0, -1));
-            overview.zooming(zoomFactor);
-            characters.zooming(zoomFactor);
+        overview.zooming(zoomFactor);
+        characters.zooming(zoomFactor);
+    });
 
-        }));
+    window.globalBucket.mainSVG
+        .call(window.globalBucket.zoomListener);
     setInterval(() => {characters.updateClusters();}, 25);
     // draw the overview
     // overview.updateOverview(window.globalBucket.data);
@@ -129,7 +153,15 @@ const init = () => {
 
     // draw the timeline
     // timeline.updateTimeline(window.globalBucket.data);
-    
+    //Follow Active Scene
+    const followElement = document.getElementById('follow-active-scene');
+    followElement.addEventListener('click', () => {
+        const followText = 'Follow Active Scene';
+        const unfollowText = 'Unfollow Active Scene';
+        window.globalBucket.followingActiveScene = !window.globalBucket.followingActiveScene;
+        goToActiveScene();
+        followElement.innerText = followElement.innerText === followText ? unfollowText : followText;
+    });
 
     window.globalBucket.newData(data);
     prepareCharacterList();
