@@ -63,6 +63,8 @@ const characters = (() => {
                     if (followingCharInterval) {
                         clearInterval(followingCharInterval);
                     }
+                    //Stop following Active Scene if character wants to be followed
+                    window.globalBucket.followingActiveScene = false;
                     followingCharInterval = setInterval(() => {
                         const parent = svg.node().parentElement;
                         const scale = 1.0;

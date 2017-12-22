@@ -5,6 +5,10 @@ window.globalBucket.activeSceneChange = (scene) => {
     characters.updateCharacters(window.globalBucket.data);
     overview.updateColors(window.globalBucket.data);
     timeline.updateTimelineColors();
+
+    if (window.globalBucket.followingActiveScene) {
+        goToActiveScene();
+    }
 };
 // whether the scene is currently playing
 window.globalBucket.playStatus = false;
@@ -88,6 +92,23 @@ const prepareCharacterList = () => {
     });
 };
 
+window.globalBucket.followingActiveScene = false;
+
+const goToActiveScene = () => {
+    const svg = window.globalBucket.mainSVGG;
+    const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
+    const activeScene = svg.selectAll('.areaData').filter((d) => d.location === currentScene.location);
+
+    const parent = svg.node().parentElement;
+    const scale = 1.0;
+    overview.zooming(scale);
+    characters.zooming(scale);
+    const transform = activeScene.attr('transform').replace('translate(', '').replace(')', '').split(',');
+    const translate = [parent.clientWidth / 2 - scale * parseFloat(transform[0]), parent.clientHeight / 2 - scale * parseFloat(transform[1])];
+    svg.transition().attr('transform', 'translate('  + translate.join(',') + ') scale(' + scale + ')') ;
+}
+
+
 // initialization of all main draw elements
 const init = () => {
     prepareMovieDropdown();
@@ -104,6 +125,7 @@ const init = () => {
         .call(d3.zoom().on("zoom", function () {
             // events for zooming
             window.globalBucket.mainSVGG.attr("transform", d3.event.transform);
+            console.log(d3.event.transform);
             if (!window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform")) return;
             const zoomFactor = Number(window.globalBucket.mainSVGG._groups[0][0].getAttribute("transform").split(' ')
                 .filter(x => x.startsWith('scale'))[0].substr(6).slice(0, -1));
@@ -130,7 +152,15 @@ const init = () => {
 
     // draw the timeline
     // timeline.updateTimeline(window.globalBucket.data);
-    
+    //Follow Active Scene
+    const followElement = document.getElementById('follow-active-scene');
+    followElement.addEventListener('click', () => {
+        const followText = 'Follow Active Scene';
+        const unfollowText = 'Unfollow Active Scene';
+        window.globalBucket.followingActiveScene = !window.globalBucket.followingActiveScene;
+        goToActiveScene();
+        followElement.innerText = followElement.innerText === followText ? unfollowText : followText;
+    });
 
     window.globalBucket.newData(data);
     prepareCharacterList();
