@@ -6,6 +6,7 @@ const pauseIcon = "fa-pause";
 const play = {
     playStatus: false,
     transitionStatus: false,
+        //Initialize the play button
     init : ()=>{
         document.getElementById(buttonId).addEventListener("click", () => {
             if (play.playStatus) {
@@ -17,6 +18,7 @@ const play = {
             play.changeIcon();
         });
     },
+//Change the icon of the button
     changeIcon: () =>{
     const elem = document.getElementById(buttonId);
     if(play.playStatus) {
@@ -27,6 +29,7 @@ const play = {
         elem.classList.add(playIcon);
     }
     },
+//Switch the play status
     switchPlayStatus: (status) => {
         play.playstatus = status;
         play.changeIcon();

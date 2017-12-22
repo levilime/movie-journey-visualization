@@ -1,4 +1,4 @@
-// TODO just for testing, this currently uses the rainbowmap
+// Utils for rainbow color map and area color scheme from colorbrewer
 const utils = {randomColor: () => {
     const randomNumber = () => Math.floor(Math.random() * 255);
     return "rgb(" + [randomNumber(), randomNumber(), randomNumber()].join(',') + ")";

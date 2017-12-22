@@ -1,6 +1,7 @@
 const dialog = (() => {
 let dialogActive = true;
 
+//Method to load the required dialogue conversation bubbles
 const loadDialogs = (currentScene) =>  {
     if (!currentScene) {return;}
 
@@ -17,7 +18,6 @@ const loadDialogs = (currentScene) =>  {
 
     const callDialogs=dialogContainer.selectAll(".bubble").data(currentScene.script);
 
-    // if (window.globalBucket.time >= callDialogs.startTime && window.globalBucket.currentSceneIndex < window.globalBucket.data.scenes.length - 1) {
     index=0;
     const dBubble=callDialogs.enter().append('div').classed('bubble',currentScript=>{if(window.globalBucket.time>currentScript.startTime){return true;}else{return false;}}).classed('alt',currentScript=>{
         //console.log(currentScript.character+' -> '+lastCh);
@@ -49,7 +49,6 @@ const loadDialogs = (currentScene) =>  {
         }).text(currentScript => {if(window.globalBucket.time>currentScript.startTime){return currentScript.character;}});
 
     dBubble2.append('p').classed('message',true).text(currentScript => {if(window.globalBucket.time>currentScript.startTime){return currentScript.dialog;}});
-    //dBubble2.append('span').classed('timestamp').text(currentScript => currentScript.dialogstartTime);
 
     index=0;
     dBubble.append('div').classed('bubble-arrow',true).classed('alt',currentScript=>{
@@ -65,6 +64,7 @@ const loadDialogs = (currentScene) =>  {
 
 };
 
+//Method to hide or show the dialog panel
 const dialogLayout = () => {
     var b = document.getElementById("bDialog");
     var s =  window.globalBucket.mainSVG;

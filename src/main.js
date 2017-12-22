@@ -10,12 +10,6 @@ window.globalBucket.activeSceneChange = (scene) => {
         goToActiveScene();
     }
 };
-// whether the scene is currently playing
-window.globalBucket.playStatus = false;
-
-window.globalBucket.changePlay = () => {
-
-};
 
 // time in the amount of pages
 window.globalBucket.time = 0 ;
@@ -23,8 +17,10 @@ const timeStep = 10;
 const pagesPerSecond = 1;
 const incrementalStep = pagesPerSecond * (timeStep/1000);
 
+// time in ms for a transition
 window.globalBucket.transitionDuration = 2000;
 
+// Get the new script data
 window.globalBucket.newDataFromkey = (key) => {
     window.globalBucket.newData(window.globalBucket.script[key])
 };
@@ -50,11 +46,13 @@ window.globalBucket.newData = (data) => {
 
 window.onload = () => {init();};
 
+//Change the header of the movie in the navbar
 const changeMovieHeader = (name) => {
     const header = document.getElementById('movieheader');
     header.innerText = name;
 }
 
+//Create the interactive dropdown list for movies
 const prepareMovieDropdown = () => {
     const dropdown = document.getElementById('moviedropdown');
     Object.keys(window.globalBucket.script).map(k => {
@@ -63,6 +61,7 @@ const prepareMovieDropdown = () => {
 })
 };
 
+//Create the interactive dropdown list for graph options
 const prepareGraphOptionsDropdown = () => {
     const dropdown = document.getElementById('graphoptionsdropdown');
     Object.keys(overview.forceGraphRepresentations).map(k => {
@@ -70,11 +69,13 @@ const prepareGraphOptionsDropdown = () => {
     })
 };
 
+//Reorder the graph based on the given key
 const graphReordering = (key) => {
     overview.updateOverview(window.globalBucket.data, key);
     characters.initCharacters(window.globalBucket.data);
 };
 
+// Create the interactive character list dropdown
 const prepareCharacterList = () => {
   const list = document.querySelector('#characters ul');
   while(list.lastChild) {
@@ -92,8 +93,10 @@ const prepareCharacterList = () => {
     });
 };
 
+//Variable checking if user is following the active scene
 window.globalBucket.followingActiveScene = false;
 
+//Method to move the svg to the active scene
 const goToActiveScene = () => {
     const svg = window.globalBucket.mainSVGG;
     const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
@@ -135,8 +138,6 @@ const init = () => {
     window.globalBucket.mainSVG
         .call(window.globalBucket.zoomListener);
     setInterval(() => {characters.updateClusters();}, 25);
-    // draw the overview
-    // overview.updateOverview(window.globalBucket.data);
 
     // timeline
     window.globalBucket.timelineSVG = d3.select('#timeline')
@@ -171,6 +172,7 @@ const init = () => {
     dialog.dialogLayout();
 };
 
+//Play the animation
 const recursivePlay = () => {
     setTimeout(() => {
         window.globalBucket.time += incrementalStep;
@@ -196,6 +198,7 @@ const recursivePlay = () => {
     } , timeStep)
 };
 
+//Responsiveness resizing of the page
 window.addEventListener("resize", (e) => {
     timeline.updateTimeline(window.globalBucket.data);
     // timeline progress pointer also has to be updated because it has to draw over the scene elements

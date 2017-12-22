@@ -1,5 +1,6 @@
 const timeline = (() => {
    var metadata = "";
+   //Update the timeline according to the data
    const updateTimeline =  (data) => {
         const width = timelineUtilcalculateTimelineWidth();
         const timeline = window.globalBucket.timelineSVGG;
@@ -35,6 +36,7 @@ const timeline = (() => {
             return d.name;
         });
     };
+   //Update the colors of the timeline according to the time
     updateTimelineColors = () => {
         const svg = window.globalBucket.mainSVGG;
         const areas = svg.selectAll('.areaData').data();
@@ -48,6 +50,7 @@ const timeline = (() => {
         });
     }
 
+    //Click event on the timeline
     clickTimeline= () => {
         const svgtimeline = window.globalBucket.timelineSVG._groups[0][0];
         svgtimeline.addEventListener("click", (e) => {
@@ -58,6 +61,7 @@ const timeline = (() => {
             if (!play.playStatus) recursivePlay()
         })
     };
+    //Show current scene information
     const metaData = (resize) => {
         const timeline = window.globalBucket.timelineSVGG;
         timeline.selectAll('metaData').attr('x', timelineUtilcalculateTimelineWidth()/4);
@@ -82,6 +86,7 @@ const timeline = (() => {
         }
     };
 
+    //Update the timer of the timeline
     const updateTimelineProgress =  (progress) => {
         const data = [{progress}];
         const timeline = window.globalBucket.timelineSVGG;

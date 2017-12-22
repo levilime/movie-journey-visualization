@@ -203,6 +203,7 @@ const characters = (() => {
         .attr('vy', (d) => d.y);
     };
 
+    //Responsive zooming of text
     const zooming = (zoomFactor) => {
         if(zoomFactor < 0.5) {
             window.globalBucket.mainSVG.selectAll('.characterName').attr('opacity', 0);

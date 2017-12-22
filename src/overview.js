@@ -1,6 +1,7 @@
 const overview = (() => {
     const connectionLineWidth = 3;
 
+    //Method to update the areas
 const updateOverview =  (data, graphoption) => {
 	const areas = getSceneData(data);
     const links = createLinks(data);
@@ -8,6 +9,7 @@ const updateOverview =  (data, graphoption) => {
 	return areas;
 };
 
+//Method to update the colors of the areas
 const updateColors = (data) => {
     const links = createLinks(data);
     const svg = window.globalBucket.mainSVGG;
@@ -23,6 +25,7 @@ const updateColors = (data) => {
         });
 }
 
+//Breadth first tag the levels of the location nodes
 const breadthFirstSearch = (startLocation, links) => {
     let queue = [startLocation];
     let nextLevel = [];
@@ -51,11 +54,14 @@ const breadthFirstSearch = (startLocation, links) => {
     return visitedNodes;
 }
 
+//Get the center of the main svg element
 const getCenter = ()    => {
     const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
     const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
     return {x: width/2, y: height/4};
     };
+
+//Update the areas with the processed data
 const updateAreas= (areaData, links, graphoption) => {
     let center = getCenter();
 
@@ -66,7 +72,7 @@ const updateAreas= (areaData, links, graphoption) => {
 
 	areaDataList.sort((a,b) => a.firstAppearance - b.firstAppearance);
 
-
+    //Remove old areas and connections
     svg.selectAll('.areaData')
         .remove();
 
@@ -75,6 +81,7 @@ const updateAreas= (areaData, links, graphoption) => {
 
     svg.selectAll('marker').remove();
 
+    //Create the new areas and connections according to the data
 	const areas = svg.selectAll('.areaData')
 		.data(areaDataList, (d) => d);
 
@@ -134,6 +141,7 @@ const updateAreas= (areaData, links, graphoption) => {
         .attr('x', 0)
         .attr('y', 180);
 
+    //D3 Drag nodes
     const dragDrop = d3.drag()
         .on('start', node => {
             node.fx = node.x;
@@ -202,8 +210,8 @@ const updateAreas= (areaData, links, graphoption) => {
     simulation.restart();
 };
 
+//Assign the area colors based on their breadth first traversal level
 const colormapping = (d, visitedNodes) => {
-    // const currentScene = window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex];
     const nodeLevel = visitedNodes.find((node) => d.location === node.location).level;
     if (nodeLevel > utils.areaColor.length - 1) {
         return utils.areaColor[0];
@@ -211,6 +219,7 @@ const colormapping = (d, visitedNodes) => {
     return utils.areaColor[utils.areaColor.length - nodeLevel - 1];
 }
 
+//Method to get a point on a circle
 const pointOnCircle = (cx, cy, px, py, radius) => {
     const vx = px- cx;
     const vy = py - cy;
@@ -218,6 +227,7 @@ const pointOnCircle = (cx, cy, px, py, radius) => {
     return {x: cx + vx / distance * radius, y: cy + vy / distance * radius};
 };
 
+//Method to responsively zoom the text
 const zooming = (zoomFactor) => {
     if(zoomFactor < 0.5) {
         window.globalBucket.mainSVG.selectAll('.areaText').attr('opacity', 0);
@@ -232,6 +242,7 @@ const zooming = (zoomFactor) => {
 
 const forceFalloff = (amount) => Math.pow(amount, 0.8);
 
+//Change from force graph option
 const changeForceGraph = (key) => {
     updateColors(window.globalBucket.data);
     if(key in forceGraphRepresentations){
@@ -239,24 +250,26 @@ const changeForceGraph = (key) => {
     }
 };
 
+//Create the force simulation at the center
 const forceCenter = () => {
     const center = getCenter();
     const strength = -150;
     const forceperScene = 150;
-    return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
+    return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength))
         .force('center', d3.forceCenter(center.x, center.y))
         .force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
         .force("y", d3.forceY(0))
         .force("x", d3.forceX(0));
 };
 
+//Create the force simulation with chronological ordering
 const forceChronoCluster = () => {
     const center = getCenter();
     let counter = 0;
     const strength = -100;
     const forceperScene = 100;
     const xIncrease = 1000;
-    return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
+    return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength))
         .force('center', d3.forceCenter(center.x, center.y))
         .force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )
         .force("y", d3.forceY(d => d.scenes.length > 2 ? -1000: 0))
@@ -271,11 +284,13 @@ const forceChronoCluster = () => {
         }));
 };
 
+    //The types of force graph representations
     const forceGraphRepresentations = {
         "Centered": forceCenter,
         "Chronologically clustered": forceChronoCluster
     };
 
+    //Change the center of the simulation
     const changeSimulationCenter= () => {
         const width = parseInt(window.globalBucket.mainSVG.style("width").replace("px", ""));
         const height = parseInt(window.globalBucket.mainSVG.style("height").replace("px", ""));
@@ -285,6 +300,7 @@ const forceChronoCluster = () => {
             .y(center.y);
     };
 
+    //Create the connections from the data JSON
 const createLinks=  (data) => {
 	return data.scenes.reduce((links, curr, i) => {
 		if(i < data.scenes.length - 1){
@@ -295,6 +311,7 @@ const createLinks=  (data) => {
 	}, []);
 };
 
+//Transform the data JSON to get the locations
 const getSceneData= (data) => {
 	let areas = {};
 	data.scenes.forEach((currentScene, i) => {
