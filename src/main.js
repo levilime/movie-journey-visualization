@@ -4,6 +4,7 @@ window.globalBucket.script = {}; // bucket for the scripts
 window.globalBucket.activeSceneChange = (scene) => {
     characters.updateCharacters(window.globalBucket.data);
     overview.updateColors(window.globalBucket.data);
+    timeline.updateTimelineColors();
 };
 // whether the scene is currently playing
 window.globalBucket.playStatus = false;

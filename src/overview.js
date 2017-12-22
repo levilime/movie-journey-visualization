@@ -15,7 +15,11 @@ const updateColors = (data) => {
 
     svg.selectAll('.areaData').selectAll('rect')
         .transition().duration(window.globalBucket.transitionDuration)
-        .attr('fill', (d) => colormapping(d, visitedNodes));
+        .attr('fill', (d) => {
+            const color = colormapping(d, visitedNodes);
+            d.color = color;
+            return d.color;
+        });
 }
 
 const breadthFirstSearch = (startLocation, links) => {

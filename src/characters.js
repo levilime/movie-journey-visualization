@@ -80,7 +80,7 @@ const characters = (() => {
             .attr('cy', 0)
             .attr('r', 20)
             .attr('fill', () => utils.randomColor())
-            .attr('stroke', 'blue')
+            .attr('stroke', '#000080')//navy blue
             .attr('stroke-width', 2)
             .attr('z-index', 2)
             //added id to circle (name)
