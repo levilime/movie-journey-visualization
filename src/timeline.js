@@ -22,11 +22,20 @@ const timeline = (() => {
                 return "translate( " + [previousLastKnownPosition, 0].join(',') + ")"
             });
 
+        const colorMap = {};
+
         const drawnTimelineScenes = sceneContainer.append('rect')
             .attr('width', (node, i) => scenePercentages[i] * width)
             .attr('height', 50)
             .attr('stroke', 'black')
-            .attr('fill', () => utils.randomColor())
+            .attr('fill', (d) => {if (colorMap[d.location]) {
+                return colorMap[d.location]
+            }
+            else {
+                colorMap[d.location] = utils.randomColor();
+                return colorMap[d.location];
+            }
+            })
             .attr('stroke-width', 0.5)
             .attr('z-index', 1);
 
