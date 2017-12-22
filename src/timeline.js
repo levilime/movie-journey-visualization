@@ -19,7 +19,7 @@ const timeline = (() => {
             .attr('transform', (node, i) => {
                 const previousLastKnownPosition = lastKnownPosition;
                 lastKnownPosition = lastKnownPosition + width * scenePercentages[i];
-                return "translate( " + [previousLastKnownPosition, 0].join(',') + ")"
+                return "translate( " + [previousLastKnownPosition, 0].join(',') + ")";
             });
 
         const colorMap = {};
@@ -59,8 +59,10 @@ const timeline = (() => {
         const timeline = window.globalBucket.timelineSVGG;
         timeline.selectAll('metaData').attr('x', timelineUtilcalculateTimelineWidth()/4);
         const newMetaData = ["At page: " + Math.floor(window.globalBucket.time) +"/"+ window.globalBucket.amountofPages
-        +" " + "Scene: "+ window.globalBucket.currentSceneIndex + "/" + window.globalBucket.data.scenes.length
-        +" " + "Location: " + window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex].name];
+        +", " + "Scene: "+ window.globalBucket.currentSceneIndex + "/" + window.globalBucket.data.scenes.length
+        +", " + "Locations: " + window.globalBucket.areaAmount
+        +", " + "Location: " + window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex].name];
+
 
         if (newMetaData[0] !== metadata || resize) {
             metadata = newMetaData[0];

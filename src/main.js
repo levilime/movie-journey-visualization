@@ -30,7 +30,7 @@ window.globalBucket.newData = (data) => {
     window.globalBucket.amountofPages = data.scenes[data.scenes.length - 1].endTime - data.scenes[0].startTime;
     window.globalBucket.startTime = data.scenes[0].startTime;
     window.globalBucket.currentSceneIndex = 0;
-    overview.updateOverview(data);
+    window.globalBucket.areaAmount = Object.keys(overview.updateOverview(data)).length  ;
     timeline.updateTimeline(window.globalBucket.data);
     overview.updateColors(data);
     window.globalBucket.time = 0;

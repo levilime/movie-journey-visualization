@@ -5,6 +5,7 @@ const updateOverview =  (data, graphoption) => {
 	const areas = getSceneData(data);
     const links = createLinks(data);
 	updateAreas(areas, links, graphoption);
+	return areas;
 };
 
 const updateColors = (data) => {
