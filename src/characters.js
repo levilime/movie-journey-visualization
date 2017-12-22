@@ -3,6 +3,11 @@ const characters = (() => {
     const initCharacters = (data) => {
         // redraw the character g bucket to make it look on top
         window.globalBucket.mainSVGG.selectAll('.charData').remove();
+        //Remove following char if change data
+        if (followingCharInterval) {
+            clearInterval(followingCharInterval);
+            followingCharInterval = null;
+        }
         initClusters();
         updateChars(data);
         stopFollowingChar();
@@ -27,18 +32,24 @@ const characters = (() => {
         const charsInView = [];
         pastScenes.forEach((scene) => {
             scene.characters.forEach((char) => {
-            let currentChar = charsInView.filter((seenChar) => { return seenChar.name === char; });
-            const location = svg.selectAll('.areaData').filter((d) => {return d.location === scene.location; });
-            const transform = location.attr('transform').replace('translate(', '').replace(')', '').split(',');
-            if (currentChar.length > 0) {
-                currentChar[0].location = scene.location;
-                currentChar[0].x = parseFloat(transform[0]);
-                currentChar[0].y = parseFloat(transform[1]);
+            let currentChar = charsInView.find((seenChar) => { return seenChar.name === char; });
+            const location = clusters.find((d) => {return d.name === scene.location; });
+            if (currentChar) {
+                currentChar.location = scene.location;
+                currentChar.x = location.x;
+                currentChar.y = location.y;
             } else {
-                charsInView.push({name: char, location: scene.location, x: parseFloat(transform[0]),
-                    y: parseFloat(transform[1]), radius: 20, inTransition: false});
+                charsInView.push({name: char, location: scene.location, x: location.x, y: location.y, radius: 20, inTransition: false});
             }
             });
+        });
+        //Set character position to previous if already in view
+        svg.selectAll('.charData').data().forEach((d) => {
+            const existingChar = charsInView.find((char) => char.name === d.name);
+            if (existingChar) {
+                existingChar.x = d.x;
+                existingChar.y = d.y;
+            }
         });
 
         // Update, enter and exit the character groups based on the collected data
@@ -52,11 +63,16 @@ const characters = (() => {
                     if (followingCharInterval) {
                         clearInterval(followingCharInterval);
                     }
+                    //Stop following Active Scene if character wants to be followed
+                    window.globalBucket.followingActiveScene = false;
                     followingCharInterval = setInterval(() => {
                         const parent = svg.node().parentElement;
                         const scale = 1.0;
-                        const translate = [parent.clientWidth / 2 - scale * parseFloat(selectedNode.attr('vx')), parent.clientHeight / 2 - scale * parseFloat(selectedNode.attr('vy'))];
+                        const transform = selectedNode.attr('transform').replace('translate(', '').replace(')', '').split(',');
+                        const translate = [parent.clientWidth / 2 - scale * parseFloat(transform[0]), parent.clientHeight / 2 - scale * parseFloat(transform[1])];
                         svg.transition().duration(followInterval).attr('transform', 'translate('  + translate.join(',') + ') scale(' + scale + ')') ;
+                        const activeTransform = d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale);
+                        window.globalBucket.mainSVG.call(window.globalBucket.zoomListener.transform, activeTransform);
                     }, followInterval);
                     d3.event.stopPropagation();
                 });
@@ -66,11 +82,15 @@ const characters = (() => {
             .attr('cy', 0)
             .attr('r', 20)
             .attr('fill', () => utils.randomColor())
+            .attr('stroke', '#000080')//navy blue
+            .attr('stroke-width', 2)
             .attr('z-index', 2)
             //added id to circle (name)
             .attr("id", function(d){
                 return d.name; 
             });
+
+        charGroups.append('title').text((d) => d.name);
 
         charGroups.append('text')
             .text((d) => d.name)
@@ -90,7 +110,13 @@ const characters = (() => {
         }).attr('vx', (d) => d.x)
         .attr('vy', (d) => d.y)
         .each((d) => d.inTransition = true)
-        .on('end', (d) => d.inTransition = false);
+        .on('end', (d, i, nodes) => {
+            d.inTransition = false;
+            const currentNode = d3.select(nodes[i]);
+            const transform = currentNode.attr('transform').replace('translate(', '').replace(')', '').split(',');
+            d.x = parseFloat(transform[0]);
+            d.y = parseFloat(transform[1]);
+        });
 
         svg.selectAll('.charData').attr('data-currentVal', (d) => d.location);
 
@@ -126,11 +152,11 @@ const characters = (() => {
         window.globalBucket.mainSVGG.selectAll('.areaData').each((d, i, nodes) => {
             const currentNode = d3.select(nodes[i]);
             const area = currentNode.select('rect');
-            const halfwidth = parseFloat(area.attr('width')) / 2;
-            const halfheight = parseFloat(area.attr('height')) / 2;
+            const halfwidth = area.attr('width') ? parseFloat(area.attr('width')) / 2 : 0;
+            const halfheight = area.attr('height') ? parseFloat(area.attr('height')) / 2 : 0;
             const transform = currentNode.attr('transform').replace('translate(', '').replace(')', '').split(',');
-            const xPos = parseFloat(transform[0]) + halfwidth;
-            const yPos = parseFloat(transform[1]) + halfheight;
+            const xPos = currentNode.attr('transform')? parseFloat(transform[0]) + halfwidth : 0;
+            const yPos = currentNode.attr('transform') ? parseFloat(transform[1]) + halfheight : 0;
             clusters[i] = {cluster: i, name: d.location, x: xPos, y: yPos, width: halfwidth, height: halfheight};
         });
     };
@@ -155,10 +181,11 @@ const characters = (() => {
         getClusterCenters();
         //nodes
         const svg = window.globalBucket.mainSVGG;
+
         const simulation = d3.forceSimulation()
             .force('cluster', d3.forceCluster().centers((item) => {
                     return clusters.find((cluster) => cluster.name === item.location);}).strength(0.5))
-            .force('collide', d3.forceCollide((d) => { return 15; }))
+            .force('collide', d3.forceCollide((d) => { return 20; }))
             .on('tick', tickClusters).nodes(svg.selectAll('.charData').data());
         characters.simulation = simulation;
     };
@@ -171,7 +198,7 @@ const characters = (() => {
             const currentCluster = clusters.find((cluster) => cluster.name === d.location);
             d.x = Math.max(currentCluster.x - currentCluster.width, Math.min(currentCluster.x + currentCluster.width, d.x));
             d.y = Math.max(currentCluster.y - currentCluster.height, Math.min(currentCluster.y + currentCluster.height, d.y));
-            return "translate( " +[d.x, d.y].join(',') + ")"
+            return "translate( " +[d.x, d.y].join(',') + ")";
         }).attr('vx', (d) => d.x)
         .attr('vy', (d) => d.y);
     };

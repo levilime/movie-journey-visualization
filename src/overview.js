@@ -15,7 +15,11 @@ const updateColors = (data) => {
 
     svg.selectAll('.areaData').selectAll('rect')
         .transition().duration(window.globalBucket.transitionDuration)
-        .attr('fill', (d) => colormapping(d, visitedNodes));
+        .attr('fill', (d) => {
+            const color = colormapping(d, visitedNodes);
+            d.color = color;
+            return d.color;
+        });
 }
 
 const breadthFirstSearch = (startLocation, links) => {
@@ -109,13 +113,13 @@ const updateAreas= (areaData, links, graphoption) => {
 
     const areaContainer = areas.enter().append('g')
     	.classed('areaData', true)
-        .attr('transform', (node,i) => "translate( " +[100 * i, 100 * i].join(',') + ")")
+        .attr('transform', (node,i) => "translate( " +[150 * i, 150 * i].join(',') + ")")
         .on("mouseover", d => highlightLines(d.location))
         .on("mouseout", turnLinesBack);
 
 	const drawnAreas = areaContainer.append('rect')
-		.attr('width', 100)
-		.attr('height', 100)
+		.attr('width', 150)
+		.attr('height', 150)
         .attr('stroke', 'black')
 		.attr('stroke-width', 2)
 		.attr('rx', '20')
@@ -127,7 +131,7 @@ const updateAreas= (areaData, links, graphoption) => {
         .text(node => node.location)
         .attr('font-size', 14)
         .attr('x', 0)
-        .attr('y', 120);
+        .attr('y', 180);
 
     const dragDrop = d3.drag()
         .on('start', node => {
@@ -175,13 +179,13 @@ const updateAreas= (areaData, links, graphoption) => {
         linkElements
 			// TODO hardcoded center of rectangle here for testing
             .attr("d", (link) => {
-                const x1 = parseFloat(nodeAreaConnector[link.source].getAttribute('vx')) + 50;
-                const y1 = parseFloat(nodeAreaConnector[link.source].getAttribute('vy')) + 50;
-                const x2 = parseFloat(nodeAreaConnector[link.target].getAttribute('vx')) + 50;
-                const y2 = parseFloat(nodeAreaConnector[link.target].getAttribute('vy')) + 50;
+                const x1 = parseFloat(nodeAreaConnector[link.source].getAttribute('vx')) + 75;
+                const y1 = parseFloat(nodeAreaConnector[link.source].getAttribute('vy')) + 75;
+                const x2 = parseFloat(nodeAreaConnector[link.target].getAttribute('vx')) + 75;
+                const y2 = parseFloat(nodeAreaConnector[link.target].getAttribute('vy')) + 75;
 
-                const circle1 = pointOnCircle(x2, y2, x1, y1, 50);
-                const circle2 = pointOnCircle(x1, y1,x2, y2, 50);
+                const circle1 = pointOnCircle(x2, y2, x1, y1, 75);
+                const circle2 = pointOnCircle(x1, y1,x2, y2, 75);
 
                 const d = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
                 if(d > 0) {
@@ -222,7 +226,7 @@ const zooming = (zoomFactor) => {
 
     window.globalBucket.mainSVG.selectAll('.areaText')
         .attr('font-size', 14 * (1/zoomFactor))
-        .attr('y', 110 + 10 * (1/zoomFactor));
+        .attr('y', 170 + 10 * (1/zoomFactor));
     };
 
 const forceFalloff = (amount) => Math.pow(amount, 0.8);
@@ -236,8 +240,8 @@ const changeForceGraph = (key) => {
 
 const forceCenter = () => {
     const center = getCenter();
-    const strength = -100;
-    const forceperScene = 100;
+    const strength = -150;
+    const forceperScene = 150;
     return d3.forceSimulation().force('charge', d3.forceManyBody().strength(strength)) //.strength(-40))
         .force('center', d3.forceCenter(center.x, center.y))
         .force("collide",d3.forceCollide( function(d){return forceFalloff(d.scenes.length) * forceperScene }).iterations(16) )

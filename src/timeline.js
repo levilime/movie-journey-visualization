@@ -22,29 +22,32 @@ const timeline = (() => {
                 return "translate( " + [previousLastKnownPosition, 0].join(',') + ")"
             });
 
-        const colorMap = {};
-
         const drawnTimelineScenes = sceneContainer.append('rect')
             .attr('width', (node, i) => scenePercentages[i] * width)
             .attr('height', 50)
             .attr('stroke', 'black')
-            .attr('fill', (d) => {if (colorMap[d.location]) {
-                return colorMap[d.location]
-            }
-            else {
-                colorMap[d.location] = utils.randomColor();
-                return colorMap[d.location];
-            }
-            })
             .attr('stroke-width', 0.5)
             .attr('z-index', 1);
-
+        updateTimelineColors();
 
         drawnTimelineScenes
             .append('title').text((d) => {
             return d.name;
         });
     };
+    updateTimelineColors = () => {
+        const svg = window.globalBucket.mainSVGG;
+        const areas = svg.selectAll('.areaData').data();
+
+        const timeline = window.globalBucket.timelineSVGG;
+        timeline.selectAll('.timelinescenes').selectAll('rect')
+            .transition().duration(window.globalBucket.transitionDuration)
+            .attr('fill', (d) => {
+                const area = areas.find((a) => a.location === d.location);
+                return area.color;
+        });
+    }
+
     clickTimeline= () => {
         const svgtimeline = window.globalBucket.timelineSVG._groups[0][0];
         svgtimeline.addEventListener("click", (e) => {
@@ -58,8 +61,8 @@ const timeline = (() => {
     const metaData = (resize) => {
         const timeline = window.globalBucket.timelineSVGG;
         timeline.selectAll('metaData').attr('x', timelineUtilcalculateTimelineWidth()/4);
-        const newMetaData = ["At page: " + Math.floor(window.globalBucket.time) +"/"+ window.globalBucket.amountofPages
-        +" " + "Scene: "+ window.globalBucket.currentSceneIndex + "/" + window.globalBucket.data.scenes.length
+        const newMetaData = ["At page: " + Math.floor(window.globalBucket.time + 1) +"/"+ Math.ceil(window.globalBucket.amountofPages)
+        +" " + "Scene: "+ (window.globalBucket.currentSceneIndex + 1) + "/" + window.globalBucket.data.scenes.length
         +" " + "Location: " + window.globalBucket.data.scenes[window.globalBucket.currentSceneIndex].name];
 
         if (newMetaData[0] !== metadata || resize) {
@@ -108,6 +111,6 @@ const timeline = (() => {
 
     };
     const timelineUtilcalculateTimelineWidth = () => parseInt(window.globalBucket.timelineSVG.style("width").replace("px", ""));
-    return {updateTimeline, updateTimelineProgress, clickTimeline, metaData};
+    return {updateTimeline, updateTimelineProgress, updateTimelineColors, clickTimeline, metaData};
 })();
 
