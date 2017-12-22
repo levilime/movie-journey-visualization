@@ -3,6 +3,11 @@ const characters = (() => {
     const initCharacters = (data) => {
         // redraw the character g bucket to make it look on top
         window.globalBucket.mainSVGG.selectAll('.charData').remove();
+        //Remove following char if change data
+        if (followingCharInterval) {
+            clearInterval(followingCharInterval);
+            followingCharInterval = null;
+        }
         initClusters();
         updateChars(data);
         stopFollowingChar();
@@ -75,6 +80,8 @@ const characters = (() => {
             .attr('cy', 0)
             .attr('r', 20)
             .attr('fill', () => utils.randomColor())
+            .attr('stroke', 'blue')
+            .attr('stroke-width', 2)
             .attr('z-index', 2)
             //added id to circle (name)
             .attr("id", function(d){
